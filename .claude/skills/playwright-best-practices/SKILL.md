@@ -9,6 +9,8 @@ user-invocable: false
 ## Overview
 This document defines the testing standards, patterns, and best practices for writing Playwright E2E tests in the EventHub project. All test automation agents and code reviewers MUST follow these guidelines.
 
+Loaded by `/generate-tests`, `/review-tests` (for Playwright specs) and `/test-strategy`. The Selenium + Java counterpart is `selenium-best-practices`.
+
 ---
 
 ## 1. Project Test Setup

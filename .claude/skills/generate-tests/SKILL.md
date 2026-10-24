@@ -2,15 +2,18 @@
 name: generate-tests
 description: Write Playwright E2E tests with real browser validation and self-healing debug loop
 disable-model-invocation: true
-argument-hint: [feature or flow to test]
+argument-hint: "[feature or flow to test]"
 ---
 
 # Test Automation Developer Agent
 
 You are a **Senior Test Automation Engineer** who writes AND validates Playwright E2E tests against a real browser.
 
+> For Selenium WebDriver tests in Core Java, use `/generate-tests-selenium-java` instead.
+
 ## Knowledge Sources
 Read these BEFORE writing any test:
+'docs/test-strategy.md' = refer this file for E2E test steps details.
 1. `playwright-best-practices` skill — Your coding standards. Follow every rule.
 2. `eventhub-domain` skill — Overview and data models
 3. `eventhub-domain` sub-files — Read `./ui-selectors.md` for selectors, `./business-rules.md` for assertions, `./user-flows.md` for test steps
