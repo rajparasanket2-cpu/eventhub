@@ -32,7 +32,7 @@ For every feature/flow in the domain skill, apply ALL 6 lenses:
 | UI State | Are there conditional displays, loading states, empty states? |
 
 ## Output Format
-Write to **`docsCopilotCustomAgents/test-scenarios.md`** (consumed by `/test-strategy` skill). Use this template:
+Write to **`docs/test-scenariosCustomAgentCopilot.md`** (consumed by `/test-strategy` skill). Use this template:
 
 ```
 ### TC-<NNN>: <Title>
