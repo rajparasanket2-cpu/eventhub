@@ -18,6 +18,7 @@ Scenarios below are written against **actual code behavior**. Where code and doc
 | D5 | "Clear all" visible when bookings exist | "Clear all bookings" is **always** rendered, including the empty state | TC-501 |
 | D6 | — | The FIFO prune runs **before** the event-exists and seat checks, so a booking that fails still deletes the oldest booking | TC-110, TC-111 |
 | D7 | — | List page size is 10 and max bookings is 9, so pagination never shows under normal use | TC-510 |
+| D8 | Booking refs have a 6-character suffix | After 10 collisions, the fallback uses a base-36 timestamp suffix of up to 8 characters | TC-411 |
 
 ---
 
@@ -121,7 +122,7 @@ Scenarios below are written against **actual code behavior**. Where code and doc
 ### TC-008: Look up a booking by reference via the API
 **Category**: Happy Path
 **Priority**: P1
-**Preconditions**: Valid JWT; user owns a booking with a known `bookingRef`
+**Preconditions**: User owns a booking with a known `bookingRef` and has a valid JWT for `Authorization: Bearer <valid JWT>`
 **Steps**:
 1. `GET /api/bookings/ref/<bookingRef>` with a Bearer token
 **Expected Results**: 200 `{ success: true, data }`; `data.bookingRef` matches; `data.event` is included
@@ -439,7 +440,7 @@ Scenarios below are written against **actual code behavior**. Where code and doc
 ### TC-204: Booking endpoints reject a missing or malformed token
 **Category**: Security
 **Priority**: P0
-**Preconditions**: None
+**Preconditions**: None; repeat each request with and without `Authorization: Bearer <valid JWT>`
 **Steps**:
 1. Call `GET /api/bookings`, `GET /api/bookings/1`, `GET /api/bookings/ref/T-AAAAAA`, `POST /api/bookings`, `DELETE /api/bookings/1` and `DELETE /api/bookings` with (a) no `Authorization` header and (b) `Authorization: Token abc` (wrong scheme)
 **Expected Results**: Every call returns 401 `{ success: false, error: "Unauthorized" }`, and no data changes
@@ -886,8 +887,9 @@ Scenarios below are written against **actual code behavior**. Where code and doc
 **Priority**: P3
 **Preconditions**: Valid token
 **Steps**:
-1. Create and collect 50+ booking refs (clearing as needed to stay under the limit)
-**Expected Results**: Every ref matches `^[A-Z0-9]-[A-Z0-9]{6}$` and no two are the same. The collision-retry logic (10 attempts, then a `Date.now()` base-36 fallback of up to 8 characters) is best covered by a Unit test with a mocked `findByRef`
+1. Create and collect 50+ booking refs, allowing FIFO pruning to keep the account under the limit
+2. In a unit test, mock `findByRef` to force all 10 collision attempts
+**Expected Results**: Ordinary refs match `^[A-Z0-9]-[A-Z0-9]{6}$` and are unique. The forced-collision case remains unique, but the current timestamp fallback can produce a suffix longer than six characters; record any format mismatch as a defect
 **Business Rule**: Ref guaranteed unique by collision retry
 **Suggested Layer**: Unit
 
@@ -949,8 +951,10 @@ Scenarios below are written against **actual code behavior**. Where code and doc
 **Preconditions**: User has bookings on Event A and Event B
 **Steps**:
 1. `GET /api/bookings?eventId=<A>`
-2. `GET /api/bookings?limit=2&page=2`
-**Expected Results**: Step 1 returns only Event A's bookings with a matching `pagination.total`. Step 2 returns the 3rd and 4th newest bookings, with `totalPages = ceil(total / 2)`
+2. `GET /api/bookings?status=confirmed`
+3. `GET /api/bookings?status=cancelled`
+4. `GET /api/bookings?limit=2&page=2`
+**Expected Results**: Step 1 returns only Event A's bookings with a matching `pagination.total`. Step 2 returns only confirmed bookings. Step 3 returns an empty result because cancelling deletes bookings rather than changing their status. Step 4 returns the 3rd and 4th newest bookings, with `totalPages = ceil(total / 2)`
 **Business Rule**: Repository filters and pagination
 **Suggested Layer**: API
 
