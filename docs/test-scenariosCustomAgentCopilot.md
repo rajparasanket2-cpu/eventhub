@@ -17,7 +17,7 @@ These scenarios assert actual implementation behavior where it differs from the 
 | Clear-all visibility | Clear-all is described when bookings exist | The button is rendered even in the empty state | TC-501 |
 | FIFO timing | Failed booking should not remove an existing booking | FIFO pruning happens before event and seat checks; a failed request at the limit can delete a booking | TC-110, TC-111 |
 | Pagination | Bookings page displays up to 9 bookings | Page requests 10; with the 9-booking limit, real data cannot fill a second page | TC-510 |
-| Booking reference fallback | Reference has a six-character suffix | After 10 collisions, fallback suffix is derived from a timestamp and can exceed six characters | TC-408 |
+| Booking reference fallback | Reference has a six-character suffix and is collision-free | After 10 collisions, fallback uses a timestamp suffix of up to eight characters and is not checked for uniqueness | TC-408 |
 
 ---
 
@@ -598,7 +598,7 @@ These scenarios assert actual implementation behavior where it differs from the 
 ### TC-404: Clear-all with no bookings is safe and confirmation can be dismissed
 **Category**: Edge Case
 **Priority**: P1
-**Preconditions**: User has no bookings
+**Preconditions**: User has one test state with no bookings and another with at least one booking
 **Steps**:
 1. Confirm clear-all with zero bookings.
 2. With bookings present, dismiss the native clear-all confirmation instead of accepting it.
@@ -644,7 +644,7 @@ These scenarios assert actual implementation behavior where it differs from the 
 **Steps**:
 1. Book events whose titles start with a digit, accented letter, and emoji.
 2. In a unit test, force all 10 generated references to collide.
-**Expected Results**: Record generated prefixes and verify they can be stored and looked up. Ordinary title prefixes use `title[0].toUpperCase()`; forced-collision fallback may violate the six-character suffix format and must remain unique.
+**Expected Results**: Record generated prefixes and verify they can be stored and looked up. Ordinary title prefixes use `title[0].toUpperCase()`. The forced-collision fallback may violate the six-character suffix format and can collide because it is not checked; any format violation or unique-key error is a defect.
 **Business Rule**: Reference prefix and collision fallback implementation.
 **Suggested Layer**: API + Unit
 
@@ -665,7 +665,7 @@ These scenarios assert actual implementation behavior where it differs from the 
 **Steps**:
 1. Collect generated references across repeated bookings, allowing FIFO pruning.
 2. Add a unit case that forces a reference collision.
-**Expected Results**: No persisted references collide; normal references match one uppercase letter, a hyphen, and six uppercase alphanumeric characters.
+**Expected Results**: Normal persisted references are unique and match one uppercase letter, a hyphen, and six uppercase alphanumeric characters. Include a case that forces the timestamp fallback and verify it does not collide; current code does not verify fallback uniqueness.
 **Business Rule**: Unique booking reference generation with collision retry.
 **Suggested Layer**: Unit + API
 
@@ -771,8 +771,8 @@ These scenarios assert actual implementation behavior where it differs from the 
 **Preconditions**: Cancellation request can be delayed
 **Steps**:
 1. Confirm cancellation and attempt to close the dialog before the response completes.
-**Expected Results**: Confirm button shows loading state; Cancel is disabled and modal close handling is disabled until request completion.
-**Business Rule**: ConfirmDialog uses its loading state during cancellation.
+**Expected Results**: Confirm button shows loading state; Cancel is disabled and modal close handling is disabled until request completion. Verify Escape does not throw: current Modal invokes its Escape handler even when `onClose` is undefined during loading, which may raise a client error.
+**Business Rule**: ConfirmDialog loading behavior must prevent dismissal without triggering a runtime error.
 **Suggested Layer**: Component
 
 ### TC-506: Clear-all button shows its pending state
