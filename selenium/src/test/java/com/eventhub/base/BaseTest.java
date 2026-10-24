@@ -40,9 +40,13 @@ public abstract class BaseTest {
                 Screenshots.save(driver, result.getMethod().getMethodName());
             }
         } finally {
-            if (driver != null) driver.quit();
-            if (api != null) api.deleteBookings(token, createdBookingIds);
-            createdBookingIds.clear();
+            // Nested so booking cleanup still runs if quit() throws (e.g. Chrome crashed)
+            try {
+                if (driver != null) driver.quit();
+            } finally {
+                if (api != null) api.deleteBookings(token, createdBookingIds);
+                createdBookingIds.clear();
+            }
         }
     }
 

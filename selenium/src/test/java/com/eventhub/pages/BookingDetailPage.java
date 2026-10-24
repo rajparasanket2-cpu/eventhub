@@ -1,6 +1,7 @@
 package com.eventhub.pages;
 
 import com.eventhub.config.Config;
+import com.eventhub.utils.Visibility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static com.eventhub.utils.Locators.buttonText;
-import static com.eventhub.utils.Locators.exactText;
 import static com.eventhub.utils.Locators.headingText;
 import static com.eventhub.utils.Locators.testId;
 
@@ -54,7 +54,7 @@ public class BookingDetailPage {
     }
 
     public boolean isSectionVisible(String sectionTitle) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(headingText(sectionTitle))).isDisplayed();
+        return Visibility.appears(wait, headingText(sectionTitle));
     }
 
     public String mainText() {
@@ -62,7 +62,7 @@ public class BookingDetailPage {
     }
 
     public boolean isRefundCheckVisible() {
-        return driver.findElement(checkRefundBtn).isDisplayed();
+        return Visibility.isDisplayed(driver, checkRefundBtn);
     }
 
     /** Clicks "Cancel Booking" and returns the confirmation dialog's text. */
@@ -71,15 +71,13 @@ public class BookingDetailPage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(dialog)).getText();
     }
 
-    /** Confirms the open dialog and waits for the redirect to the bookings list. */
-    public BookingsPage confirmCancel() {
+    /**
+     * Confirms the open dialog. Returns right after the click so the caller can
+     * check the toast before it auto-dismisses; the app then redirects to the
+     * bookings list (use BookingsPage.waitForLoaded()).
+     */
+    public void confirmCancel() {
         WebElement d = driver.findElement(dialog);
         d.findElement(confirmYes).click();
-        wait.until(ExpectedConditions.urlToBe(Config.BASE_URL + "/bookings"));
-        return new BookingsPage(driver).waitForLoaded();
-    }
-
-    public boolean isToastVisible(String message) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(exactText(message))).isDisplayed();
     }
 }

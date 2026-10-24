@@ -59,11 +59,14 @@ public class ApiClient {
         return send("GET", "/bookings/" + bookingId, token, null, -1).status();
     }
 
-    /** Best-effort cleanup: a 404 just means the test already removed it. */
+    /** Best-effort cleanup: a 404 just means the test already removed it. Other failures are logged. */
     public void deleteBookings(String token, List<Long> ids) {
         for (Long id : ids) {
             try {
-                send("DELETE", "/bookings/" + id, token, null, -1);
+                int status = send("DELETE", "/bookings/" + id, token, null, -1).status();
+                if (status != 200 && status != 404) {
+                    System.err.println("Cleanup of booking #" + id + " failed: HTTP " + status);
+                }
             } catch (RuntimeException e) {
                 System.err.println("Cleanup of booking #" + id + " failed: " + e.getMessage());
             }

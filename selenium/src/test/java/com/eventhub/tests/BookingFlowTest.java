@@ -7,6 +7,7 @@ import com.eventhub.base.BaseTest;
 import com.eventhub.config.Config;
 import com.eventhub.pages.BookingDetailPage;
 import com.eventhub.pages.BookingsPage;
+import com.eventhub.pages.Toast;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -102,11 +103,12 @@ public class BookingFlowTest extends BaseTest {
         Assert.assertTrue(dialog.contains("Cancelling " + booking.bookingRef() + " will release " + QUANTITY + " seat(s)"),
                 "Dialog description should name the ref and seat count: " + dialog);
 
-        // -- Step 3: Confirm; the app redirects to the list --
-        BookingsPage bookings = detail.confirmCancel();
+        // -- Step 3: Confirm; check the toast straight away (it auto-dismisses after 4.5s) --
+        detail.confirmCancel();
+        Assert.assertTrue(new Toast(driver).isShown("Booking cancelled successfully"), "Success toast should be visible");
 
-        // -- Step 4: Toast shown and the booking is gone from the list and the API --
-        Assert.assertTrue(detail.isToastVisible("Booking cancelled successfully"), "Success toast should be visible");
+        // -- Step 4: Redirected to the list; the booking is gone from the list and the API --
+        BookingsPage bookings = new BookingsPage(driver).waitForLoaded();
         Assert.assertTrue(bookings.waitForCardGone(booking.bookingRef()), "Cancelled booking should not be listed");
         Assert.assertEquals(api.bookingStatus(token, booking.id()), 404, "GET /bookings/:id after cancel");
     }

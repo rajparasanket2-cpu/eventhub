@@ -16,6 +16,8 @@ const QUANTITY = 2;
 const fmtPrice = (n) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 /**
@@ -86,7 +88,10 @@ test.describe('Booking Flow — critical E2E paths', () => {
   // account keep their data. A 404 here just means the test already removed it.
   test.afterEach(async ({ request }) => {
     for (const id of [booking?.id, ...extraBookingIds].filter(Boolean)) {
-      await request.delete(`${API_URL}/bookings/${id}`, { headers: apiHeaders(token) });
+      const res = await request.delete(`${API_URL}/bookings/${id}`, { headers: apiHeaders(token) });
+      if (![200, 404].includes(res.status())) {
+        console.warn(`Cleanup of booking #${id} failed: HTTP ${res.status()}`);
+      }
     }
   });
 
@@ -168,6 +173,11 @@ test.describe('Booking Flow — critical E2E paths', () => {
     await expect(page).toHaveURL(`${BASE_URL}/bookings`);
 
     // -- Step 5: The booking is gone from the list and the API --
+    // Wait for the list to finish loading first: while the skeletons show there
+    // are no refs at all, so the count-0 check would pass without testing anything
+    await expect(
+      page.getByTestId('booking-card').first().or(page.getByRole('heading', { name: 'No bookings yet' })),
+    ).toBeVisible();
     await expect(page.locator('.booking-ref', { hasText: booking.bookingRef })).toHaveCount(0);
     const res = await request.get(`${API_URL}/bookings/${booking.id}`, { headers: apiHeaders(token) });
     expect(res.status()).toBe(404);
@@ -260,7 +270,7 @@ test.describe('Booking Flow — critical E2E paths', () => {
     // -- Step 2: Confirmation card shows the new ref --
     await expect(page.getByRole('heading', { name: /Booking Confirmed/ })).toBeVisible();
     await expect(page.locator('.booking-ref')).toHaveText(created.bookingRef);
-    expect(created.bookingRef).toMatch(new RegExp(`^${event.title[0].toUpperCase()}-[A-Z0-9]{6}$`));
+    expect(created.bookingRef).toMatch(new RegExp(`^${escapeRegExp(event.title[0].toUpperCase())}-[A-Z0-9]{6}$`));
     console.log(`Booked through the UI: ${created.bookingRef}`);
 
     // -- Step 3: Go to My Bookings from the confirmation --

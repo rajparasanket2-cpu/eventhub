@@ -2,6 +2,7 @@ package com.eventhub.pages;
 
 import com.eventhub.config.Config;
 import com.eventhub.utils.Locators;
+import com.eventhub.utils.Visibility;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -38,19 +39,23 @@ public class BookingsPage {
     public BookingsPage openFromNavbar() {
         driver.get(Config.BASE_URL);
         wait.until(ExpectedConditions.elementToBeClickable(navBookings)).click();
-        wait.until(ExpectedConditions.urlToBe(Config.BASE_URL + "/bookings"));
         return waitForLoaded();
     }
 
-    /** The list has finished loading once it shows cards or the empty state (not the skeletons). */
+    /**
+     * We're on /bookings and the list has finished loading: it shows cards or
+     * the empty state (not the skeletons). Also use this after an action that
+     * redirects here, such as cancelling from the detail page.
+     */
     public BookingsPage waitForLoaded() {
+        wait.until(ExpectedConditions.urlToBe(Config.BASE_URL + "/bookings"));
         wait.until(ExpectedConditions.visibilityOfElementLocated(heading));
         wait.until(d -> !d.findElements(cards).isEmpty() || !d.findElements(emptyState).isEmpty());
         return this;
     }
 
     public boolean isHeadingVisible() {
-        return driver.findElement(heading).isDisplayed();
+        return Visibility.isDisplayed(driver, heading);
     }
 
     public WebElement cardFor(String bookingRef) {
@@ -66,11 +71,11 @@ public class BookingsPage {
     }
 
     public boolean cardHasViewDetails(String bookingRef) {
-        return cardFor(bookingRef).findElement(viewDetails).isDisplayed();
+        return Visibility.isDisplayed(cardFor(bookingRef), viewDetails);
     }
 
     public boolean cardHasCancelButton(String bookingRef) {
-        return cardFor(bookingRef).findElement(cancelBtn).isDisplayed();
+        return Visibility.isDisplayed(cardFor(bookingRef), cancelBtn);
     }
 
     public BookingDetailPage viewDetails(String bookingRef) {
