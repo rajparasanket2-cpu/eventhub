@@ -11,7 +11,7 @@ This document defines the testing standards, patterns, and best practices for wr
 
 Playwright is the project's primary E2E tool (see `playwright-best-practices`). Use Selenium when a task explicitly asks for it, or when driving the browser through the Selenium MCP server.
 
-Loaded by `/generate-tests-selenium-java` (writes and runs Selenium Java tests), `/review-tests` (for files under `selenium/`) and `/test-strategy`.
+Loaded by `/generate-tests-selenium-java` (writes and runs Selenium Java tests), `/review-tests-selenium-java` (reviews them) and `/test-strategy`.
 
 "Core Java" here means plain Java and the JDK: no Spring, no Serenity, no Cucumber, no RestAssured. The only libraries are Selenium, TestNG, and Jackson (the JDK has no JSON parser).
 

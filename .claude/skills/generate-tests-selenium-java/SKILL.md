@@ -82,3 +82,4 @@ Do NOT stop after writing. The test is only done when it **compiles and passes i
 - Never guess selectors — verify via the browser MCP or source code
 - If a test fails, diagnose the root cause before changing code. Don't blindly retry, add sleeps, or raise timeouts to make it pass
 - After the code passes, briefly explain: what's tested, which business rules are covered, any missing `data-testid` attributes
+- Suggest `/review-tests-selenium-java <TestClass>` as the next step for a quality review

@@ -70,7 +70,8 @@ Layered: `routes → controllers → services → repositories → Prisma` (`bac
 ## Project skills (`.claude/skills/`)
 - `/generate-tests <feature>` — writes Playwright tests and validates them in a real browser
 - `/generate-tests-selenium-java <feature>` — writes Selenium WebDriver tests in Core Java and validates them in a real browser
-- `/review-tests <file>` — reviews Playwright or Selenium Java test quality against the matching best-practices skill
+- `/review-tests <file>` — reviews Playwright test quality against the best-practices skill
+- `/review-tests-selenium-java <class>` — reviews Selenium Java test quality against `selenium-best-practices`
 - `/create-scenarios <area>` — writes functional scenarios to `docs/test-scenarios.md`
 - `/test-strategy <scenarios>` — assigns scenarios to pyramid layers (`docs/test-strategy.md`)
 - `eventhub-domain`, `playwright-best-practices` and `selenium-best-practices` are reference-only skills loaded by the above.
