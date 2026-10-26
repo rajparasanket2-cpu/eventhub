@@ -18,7 +18,7 @@ Read these before making assignments:
 1. `docs/test-scenarios.md` as the primary input, when available.
 2. `.claude/skills/eventhub-domain/SKILL.md` and relevant domain references, especially `business-rules.md` and `api-reference.md`.
 3. `.github/agents/playwright-best-practices.agent.md` for Playwright E2E standards.
-4. `.claude/skills/selenium-best-practices/SKILL.md` when Selenium tests exist or are requested.
+4. `.github/agents/selenium-best-practices.agent.md` when Selenium tests exist or are requested.
 5. Backend sources under `backend/src/services/` and `backend/src/controllers/` to identify business rules, functions, and endpoints.
 6. Frontend sources under `frontend/app/` and `frontend/components/` to identify relevant UI components and states.
 7. Existing Playwright specs in `tests/*.spec.js` and Selenium tests in `selenium/src/test/java/`.

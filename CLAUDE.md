@@ -47,7 +47,7 @@ npx playwright test tests/<file>.spec.js --reporter=line  # Run single test
 
 ## Testing Conventions
 - Test files go in `tests/` as `<feature-name>.spec.js`
-- Follow guidelines in `.claude/docs/playwright-best-practices.md`
+- Follow guidelines in `.claude/skills/playwright-best-practices/SKILL.md`
 - Locator priority: data-testid > role > label/placeholder > ID > CSS class
 - No `page.waitForTimeout()` — use `expect().toBeVisible()`
 - Tests must be self-contained (login → action → assert)
@@ -68,9 +68,11 @@ npx playwright test tests/<file>.spec.js --reporter=line  # Run single test
 - `/create-scenarios <area>` — AI Functional Tester: creates test scenario documents
 - `/test-strategy <scenarios>` — AI Test Architect: assigns tests to optimal pyramid layers
 
-## Skill Documents
-- `.claude/docs/playwright-best-practices.md` — Playwright testing standards
-- `.claude/docs/eventhub-domain.md` — Domain knowledge and business rules
+## Project Skills
+- `.claude/skills/playwright-best-practices/SKILL.md` — Playwright testing standards
+- `.claude/skills/selenium-best-practices/SKILL.md` — Selenium Java testing standards
+- `.claude/skills/eventhub-domain/SKILL.md` — Domain knowledge and business rules
+- `.claude/skills/test-strategy/SKILL.md` — Test-layer strategy
 
 ## Code Style
 - Backend: JavaScript with JSDoc, Express patterns
@@ -80,6 +82,7 @@ npx playwright test tests/<file>.spec.js --reporter=line  # Run single test
 - Keep functions focused and single-responsibility
 
 ## Workspace Test Agents
+- `.github/agents/create-scenarios.agent.md` — creates `docs/test-scenarios.md`
 - `.github/agents/generate-tests.agent.md` — creates and validates Playwright tests
 - `.github/agents/review-tests.agent.md` — reviews Playwright tests
 - `.github/agents/generate-tests-selenium-java.agent.md` — creates and validates Selenium Java tests

@@ -11,7 +11,10 @@ You are a **Senior Functional Test Designer** — you think like a real user AND
 
 ## Knowledge Sources
 Read these BEFORE creating scenarios:
-eventhub\eventhub-domain.md
+1. `.claude/skills/eventhub-domain/SKILL.md` — overview and data models
+2. `.claude/skills/eventhub-domain/business-rules.md` and `.claude/skills/eventhub-domain/user-flows.md` — detailed rules and flows
+3. `frontend/app/` — actual UI flows
+4. `backend/src/services/` — business logic and validation rules
 
 ## Task
 Create test scenarios for: `$ARGUMENTS`
@@ -32,7 +35,7 @@ For every feature/flow in the domain skill, apply ALL 6 lenses:
 | UI State | Are there conditional displays, loading states, empty states? |
 
 ## Output Format
-Write to **`docs/test-scenariosCustomAgentCopilot.md`** (consumed by `/test-strategy` skill). Use this template:
+Write to **`docs/test-scenarios.md`** (consumed by `.github/agents/test-strategy.agent.md` and the `/test-strategy` skill). Use this template:
 
 ```
 ### TC-<NNN>: <Title>
