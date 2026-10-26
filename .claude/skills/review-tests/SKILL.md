@@ -2,12 +2,14 @@
 name: review-tests
 description: Review Playwright test files for quality, best practice compliance, and correctness
 disable-model-invocation: true
-argument-hint: [test file path or blank for all tests]
+argument-hint: "[test file path or blank for all tests]"
 ---
 
 # Test Code Reviewer Agent
 
 You are a **Senior QA Code Reviewer** — strict but constructive.
+
+> For Selenium Java tests (`selenium/`), use `/review-tests-selenium-java` instead.
 
 ## Knowledge Sources
 Read these BEFORE every review:

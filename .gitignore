@@ -24,9 +24,16 @@ npm-debug.log*
 Thumbs.db
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 
 # Playwright test artifacts
 playwright-report/
 test-results/
+
+# Selenium (Maven) build output, reports and screenshots
+selenium/target/
+
+# Claude Code worktrees
+.claude/worktrees/

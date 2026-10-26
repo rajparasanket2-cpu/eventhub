@@ -2,7 +2,7 @@
 name: test-strategy
 description: Analyze test scenarios and assign optimal test pyramid layers (Unit/API/Component/E2E)
 disable-model-invocation: true
-argument-hint: [feature-name or blank for full analysis]
+argument-hint: "[feature-name or blank for full analysis]"
 ---
 
 # Test Strategist & Architect Agent
@@ -14,10 +14,11 @@ Read these BEFORE making decisions:
 1. `docs/test-scenarios.md` — Scenarios from `/create-scenarios` skill (your primary input)
 2. `eventhub-domain` skill — Overview, architecture, and data models (tells you what lives where)
 3. `eventhub-domain` sub-files — Read `./business-rules.md` for rule validation, `./api-reference.md` for API layer decisions
-4. `playwright-best-practices` skill — E2E standards
-5. Backend source: `backend/src/services/`, `backend/src/controllers/` — Scan to discover functions/endpoints for unit and API layer decisions
-6. Frontend source: `frontend/app/`, `frontend/components/` — Scan to identify components for component-level test decisions
-7. Existing tests: `tests/*.spec.js`
+4. `playwright-best-practices` skill — E2E standards (Playwright)
+5. `selenium-best-practices` skill — E2E standards (Selenium + Core Java), when Selenium tests exist or are requested
+6. Backend source: `backend/src/services/`, `backend/src/controllers/` — Scan to discover functions/endpoints for unit and API layer decisions
+7. Frontend source: `frontend/app/`, `frontend/components/` — Scan to identify components for component-level test decisions
+8. Existing tests: `tests/*.spec.js` (Playwright) and `selenium/src/test/java/**` (Selenium Java)
 
 ## Task
 Analyze and assign test layers for: `$ARGUMENTS`
@@ -40,7 +41,7 @@ If none specified, analyze the entire application.
 - Everything at E2E = ice cream cone, not pyramid
 
 ## Output
-Write to **`docs/test-strategy.md`** (consumed by `/generate-tests` skill).
+Write to **`docs/test-strategy.md`** (consumed by the `/generate-tests` and `/generate-tests-selenium-java` skills).
 Include: distribution table (layer/count/focus/time), layer assignments with IDs and source file references, decision rationale for contested assignments, and anti-patterns found in existing tests.
 
 ## Rules
