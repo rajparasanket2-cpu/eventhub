@@ -495,7 +495,7 @@ Always pass values as `arguments[0]`. Never concatenate them into the script str
 | Main user     | eventhub-selenium-main@qa-sandbox.dev    | Selenium1! | Primary tester   |
 | Other user    | eventhub-selenium-other@qa-sandbox.dev   | Selenium1! | Cross-user tests |
 
-These are Selenium's own users. Playwright uses `rahulshetty1@gmail.com` / `@yahoo.com`, so the two suites never share bookings, seat counts or the 9-booking limit, and can run in parallel. `BaseTest` registers the users in `@BeforeSuite` (`ApiClient.ensureAccount`, where 409 means it already exists). Override them with `SELENIUM_USER_EMAIL`, `SELENIUM_USER_PASSWORD`, `SELENIUM_OTHER_USER_EMAIL` and `SELENIUM_OTHER_USER_PASSWORD`.
+These are Selenium's own users. Playwright uses `rahulshetty1@gmail.com` / `@yahoo.com`, so the two suites never share bookings, seat counts or the 9-booking limit, and can run in parallel. `BaseTest` registers the users in `@BeforeSuite` (`ApiClient.ensureAccount` logs in first and registers only if that fails; a duplicate register returns 400). Override them with `SELENIUM_USER_EMAIL`, `SELENIUM_USER_PASSWORD`, `SELENIUM_OTHER_USER_EMAIL` and `SELENIUM_OTHER_USER_PASSWORD`.
 
 For cross-user tests, use a **separate `WebDriver`** for User B (create it in the test, quit it in a `finally`). Never share a browser session between users.
 

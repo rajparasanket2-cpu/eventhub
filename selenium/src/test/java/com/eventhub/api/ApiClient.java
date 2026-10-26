@@ -27,12 +27,11 @@ public class ApiClient {
     public record Event(long id, String title, String category, String venue, String city, double price, int availableSeats) {}
     public record Booking(long id, String bookingRef, int quantity, double totalPrice) {}
 
-    /** Registers the account, or does nothing if it already exists (409). */
+    /** Registers the account unless it can already log in (a duplicate register is a 400, not a 409). */
     public void ensureAccount(String email, String password) {
-        int status = send("POST", "/auth/register", null, Map.of("email", email, "password", password), -1).status();
-        if (status / 100 != 2 && status != 409) {
-            throw new AssertionError("POST /auth/register for " + email + " -> " + status);
-        }
+        Map<String, String> credentials = Map.of("email", email, "password", password);
+        if (send("POST", "/auth/login", null, credentials, -1).status() == 200) return;
+        send("POST", "/auth/register", null, credentials, 201);
     }
 
     public String login(String email, String password) {
