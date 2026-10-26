@@ -11,7 +11,8 @@
 |---|---|---|---|---|---|---|
 | `tests/booking-flow.spec.js` + `tests/booking-management.spec.js` | Playwright 1.58.2 (Node 24.22.0) | 7 | 7 | 0 | 0 | 1.3 min |
 | `selenium/` — `BookingFlowTest` | Selenium 4 + TestNG (Java 25, Maven 3.9.9) | 3 | 3 | 0 | 0 | ~8.6 s (test bodies) |
-| **Total** | | **10** | **10** | **0** | **0** | |
+| `tests/cross-user-booking.spec.js` + `tests/refund-eligibility.spec.js` + `tests/sandbox-banner.spec.js` | Playwright 1.58.2 | 5 | 5 | 0 | 0 | 1.1 min |
+| **Total** | | **15** | **15** | **0** | **0** | |
 
 **Result: PASS**
 
@@ -53,10 +54,29 @@ Reports: `selenium/target/surefire-reports/index.html`, `emailable-report.html`,
 
 Non-blocking warnings: Selenium printed `Unable to find CDP implementation matching 155`. That only affects DevTools features, which these tests don't use. To silence it, add the matching `selenium-devtools` dependency or upgrade Selenium.
 
+## Restored Playwright specs
+
+These three specs were recovered from older branches. They had been written for `http://localhost:3000`, and their `BASE_URL` now points at the live site like the other specs.
+
+Command:
+```bash
+npx playwright test tests/cross-user-booking.spec.js tests/refund-eligibility.spec.js tests/sandbox-banner.spec.js --reporter=line
+```
+
+| Test | Spec | Result |
+|---|---|---|
+| Gmail user sees Access Denied when viewing a Yahoo user's booking | cross-user-booking.spec.js | ✅ Pass |
+| Refund eligible for a single-ticket booking | refund-eligibility.spec.js | ✅ Pass |
+| Refund not eligible for a group-ticket booking | refund-eligibility.spec.js | ✅ Pass |
+| Sandbox banner is shown when 6 events are returned (mocked API) | sandbox-banner.spec.js | ✅ Pass |
+| Sandbox banner is hidden when 4 events are returned (mocked API) | sandbox-banner.spec.js | ✅ Pass |
+
+The cross-user and refund specs book through the UI and do not delete their bookings afterwards. The live account's FIFO limit of 9 bookings keeps that bounded.
+
 ## Coverage vs. scenarios
 
 `docs/test-strategy.md` §2.4 assigns 10 scenarios to the E2E layer. These suites cover the six booking-journey ones (TC-001 to TC-006). Playwright covers all six plus TC-107 (booking-ref prefix, which also has unit and API layers in the strategy). Selenium covers TC-001 to TC-003.
 
-Not covered by this run: the remaining E2E-layer scenarios in the strategy, such as TC-200 (cross-user "Access Denied") and TC-512 (list/seat refresh). They have no dedicated test in these suites.
+`cross-user-booking.spec.js` checks the cross-user "Access Denied" rule (the strategy's TC-200 journey) end to end. Still not covered: TC-512 (list/seat refresh) has no dedicated test.
 
 Test data cleanup: each test creates its own booking through the API and deletes it afterwards (TC-005 clears the account's bookings by design).

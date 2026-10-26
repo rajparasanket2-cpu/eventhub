@@ -3,7 +3,7 @@
 Generated: 2026-10-24
 Scope: Booking list and detail, booking creation and lookup, cancellation, clear-all, refund eligibility, FIFO limits, per-user seats, admin bookings, API validation, and access control.
 
-Sources: `eventhub-domain.md`; `backend/src/services/bookingService.js`, `backend/src/repositories/bookingRepository.js`, `backend/src/validators/bookingValidator.js`, `backend/src/routes/bookingRoutes.js`, `backend/src/middleware/authMiddleware.js`; `frontend/app/bookings/**`, `frontend/app/admin/bookings/page.tsx`, `frontend/components/bookings/BookingCard.jsx`, and `frontend/lib/hooks/useBookings.ts`.
+Sources: `.claude/skills/eventhub-domain/`; `backend/src/services/bookingService.js`, `backend/src/repositories/bookingRepository.js`, `backend/src/validators/bookingValidator.js`, `backend/src/routes/bookingRoutes.js`, `backend/src/middleware/authMiddleware.js`; `frontend/app/bookings/**`, `frontend/app/admin/bookings/page.tsx`, `frontend/components/bookings/BookingCard.jsx`, and `frontend/lib/hooks/useBookings.ts`.
 
 ## Observed differences from domain documentation
 
