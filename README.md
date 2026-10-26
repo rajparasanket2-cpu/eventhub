@@ -117,7 +117,7 @@ git clone <repo-url> && cd eventhub
 run-tests.cmd             # Windows Command Prompt / PowerShell
 ```
 
-This runs the Playwright suite first and then the Selenium (Java + TestNG) suite. It prints a pass/fail summary and exits non-zero if either suite fails. To run a single suite, pass `playwright` or `selenium`. Reports are written to:
+This runs the Playwright suite and the Selenium (Java + TestNG) suite in parallel, prefixing each output line with the suite name. It prints a pass/fail summary and exits non-zero if either suite fails. To run a single suite, pass `playwright` or `selenium`. Reports are written to:
 
 | Report | Path |
 |---|---|
@@ -131,7 +131,7 @@ This runs the Playwright suite first and then the Selenium (Java + TestNG) suite
 | `docker/*.Dockerfile.dockerignore` | Per-image build context (only the files each image needs) |
 | `docker-compose.yml` | `playwright` and `selenium` services, with `./reports` mounted |
 
-Both suites share one live test account, so don't run them in parallel (avoid `docker compose up`).
+You can also run `docker compose up --build`, which starts both suites in parallel without the summary. They can run side by side because each suite logs in as different users. Playwright uses `rahulshetty1@gmail.com` and `@yahoo.com`. Selenium uses its own pair, registered automatically on the first run. The app keeps bookings and seat counts per user.
 
 ---
 

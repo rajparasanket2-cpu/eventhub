@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,14 @@ public abstract class BaseTest {
     protected ApiClient api;
     protected String token;
     protected final List<Long> createdBookingIds = new ArrayList<>();
+
+    /** Once per run: make sure Selenium's own accounts exist (a fresh clone or a reset site has none). */
+    @BeforeSuite(alwaysRun = true)
+    public void ensureAccounts() {
+        ApiClient setup = new ApiClient();
+        setup.ensureAccount(Config.USER_EMAIL, Config.USER_PASSWORD);
+        setup.ensureAccount(Config.OTHER_USER_EMAIL, Config.OTHER_USER_PASSWORD);
+    }
 
     @BeforeMethod
     public void setUp() {

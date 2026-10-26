@@ -17,7 +17,7 @@ These standards are adapted from `.claude/skills/selenium-best-practices/SKILL.m
 - Use Core Java 17+, Maven in the separate `selenium/` module, Selenium 4.x, TestNG, Jackson, and JDK `java.net.http.HttpClient` for API setup. Do not introduce Spring, Serenity, Cucumber, RestAssured, or other libraries without approval.
 - Pin exact dependency versions; never use ranges or `LATEST`. Selenium Manager provides ChromeDriver; do not add WebDriverManager or commit driver binaries.
 - Keep Selenium code under `selenium/`, not Playwright's `tests/`.
-- Use Chrome, a 30-second page-load timeout, explicit waits with a five-second default, and `parallel="none"` because test accounts are shared.
+- Use Chrome, a 30-second page-load timeout, explicit waits with a five-second default, and `parallel="none"` because all classes share Selenium's test users. Selenium uses its own users (`eventhub-selenium-main@qa-sandbox.dev` and `eventhub-selenium-other@qa-sandbox.dev`, registered by `BaseTest` if missing), separate from Playwright's, so the two suites can run in parallel.
 - Test classes use `<Feature>Test.java` in PascalCase. Methods use `tc<NNN>_<whatIsVerified>` and a descriptive TestNG `@Test(description = "TC-NNN: ...")`.
 
 ## Locators and Scoping

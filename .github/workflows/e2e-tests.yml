@@ -9,9 +9,10 @@
 # TRIGGER: push to main (plus manual runs from the Actions tab)
 #
 # ORDER:
-#   playwright → selenium. Both suites use the same live test account, so they
-#   must never run at the same time. Selenium still runs when Playwright fails
-#   (`if: always()`), and each job fails on its own test failures.
+#   playwright and selenium run in parallel. They log in as different users
+#   (Playwright: rahulshetty1@gmail.com / @yahoo.com; Selenium: its own accounts,
+#   see selenium/.../config/Config.java), and the app keeps bookings and seat
+#   counts per user, so they don't interfere. Each job fails on its own test failures.
 #
 # REPORTS (artifacts, kept 30 days):
 #   playwright-report-<run>  – Playwright HTML report (open index.html)
@@ -28,8 +29,8 @@ on:
   # Allow manual runs from the GitHub Actions UI
   workflow_dispatch:
 
-# Queue runs instead of cancelling: a cancelled run can leave test bookings on
-# the shared account, and two runs at once would interfere with each other.
+# Queue runs instead of cancelling: a cancelled run can leave test bookings
+# behind, and two runs of the same suite would share its accounts.
 concurrency:
   group: e2e-tests
   cancel-in-progress: false
@@ -95,8 +96,6 @@ jobs:
     name: Selenium Java Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: playwright
-    if: ${{ always() }}   # run after Playwright even when it failed, never alongside it
 
     steps:
       - name: Checkout code

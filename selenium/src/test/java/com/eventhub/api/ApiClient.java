@@ -27,6 +27,14 @@ public class ApiClient {
     public record Event(long id, String title, String category, String venue, String city, double price, int availableSeats) {}
     public record Booking(long id, String bookingRef, int quantity, double totalPrice) {}
 
+    /** Registers the account, or does nothing if it already exists (409). */
+    public void ensureAccount(String email, String password) {
+        int status = send("POST", "/auth/register", null, Map.of("email", email, "password", password), -1).status();
+        if (status / 100 != 2 && status != 409) {
+            throw new AssertionError("POST /auth/register for " + email + " -> " + status);
+        }
+    }
+
     public String login(String email, String password) {
         JsonNode body = send("POST", "/auth/login", null, Map.of("email", email, "password", password), 200).body();
         return body.get("token").asText();
@@ -102,7 +110,15 @@ public class ApiClient {
                     ? HttpRequest.BodyPublishers.noBody()
                     : HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(body)));
 
-            HttpResponse<String> res = http.send(req.build(), HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> res;
+            try {
+                res = http.send(req.build(), HttpResponse.BodyHandlers.ofString());
+            } catch (IOException e) {
+                // A pooled keep-alive connection the server already closed answers with zero bytes.
+                // The request never reached the server, so resending it once is safe (even a POST).
+                if (!isStaleConnection(e)) throw e;
+                res = http.send(req.build(), HttpResponse.BodyHandlers.ofString());
+            }
             if (expectedStatus > 0 && res.statusCode() != expectedStatus) {
                 throw new AssertionError(method + " " + path + " -> " + res.statusCode() + ": " + res.body());
             }
@@ -113,5 +129,10 @@ public class ApiClient {
             Thread.currentThread().interrupt();
             throw new IllegalStateException(e);
         }
+    }
+
+    private static boolean isStaleConnection(IOException e) {
+        String message = e.getMessage();
+        return message != null && message.contains("received no bytes");
     }
 }

@@ -74,7 +74,7 @@ Pin exact versions. Never use version ranges or `LATEST`.
 - **Base URL**: `https://eventhub.rahulshettyacademy.com` (live site; tests do not hit the local dev server)
 - **API URL**: `https://api.eventhub.rahulshettyacademy.com/api` (the site's own `/api` path serves the Next.js app, not the backend)
 - **Timeouts**: 5s default explicit wait, 30s page load
-- **Parallel execution**: Disabled (`parallel="none"` in `testng.xml`). The test account is shared, so run one class at a time
+- **Parallel execution**: Disabled within the suite (`parallel="none"` in `testng.xml`), because all classes share Selenium's test users. The Selenium suite as a whole can run alongside Playwright, which uses different users (see Test Users)
 - **Screenshots**: Only on failure (see §11)
 
 ```java
@@ -87,8 +87,10 @@ public final class Config {
     public static final boolean HEADED  = Boolean.getBoolean("headed");
     public static final Duration WAIT   = Duration.ofSeconds(5);
 
-    public static final String USER_EMAIL    = "rahulshetty1@gmail.com";
-    public static final String USER_PASSWORD = "Magiclife1!";
+    // Selenium's own users (not Playwright's), so the two suites can run in parallel
+    public static final String USER_EMAIL    = env("SELENIUM_USER_EMAIL", "eventhub-selenium-main@qa-sandbox.dev");
+    public static final String USER_PASSWORD = env("SELENIUM_USER_PASSWORD", "Selenium1!");
+    // ... OTHER_USER_EMAIL / OTHER_USER_PASSWORD likewise, and env(name, fallback) reads System.getenv
 }
 ```
 
@@ -488,10 +490,12 @@ protected void loginInBrowser(String jwt) {
 Always pass values as `arguments[0]`. Never concatenate them into the script string.
 
 ### Test Users
-| User          | Email                       | Password    | Purpose          |
-|---------------|----------------------------|-------------|------------------|
-| Gmail User    | rahulshetty1@gmail.com     | Magiclife1! | Primary tester   |
-| Yahoo User    | rahulshetty1@yahoo.com     | Magiclife1! | Cross-user tests |
+| User          | Email                                    | Password   | Purpose          |
+|---------------|------------------------------------------|------------|------------------|
+| Main user     | eventhub-selenium-main@qa-sandbox.dev    | Selenium1! | Primary tester   |
+| Other user    | eventhub-selenium-other@qa-sandbox.dev   | Selenium1! | Cross-user tests |
+
+These are Selenium's own users. Playwright uses `rahulshetty1@gmail.com` / `@yahoo.com`, so the two suites never share bookings, seat counts or the 9-booking limit, and can run in parallel. `BaseTest` registers the users in `@BeforeSuite` (`ApiClient.ensureAccount`, where 409 means it already exists). Override them with `SELENIUM_USER_EMAIL`, `SELENIUM_USER_PASSWORD`, `SELENIUM_OTHER_USER_EMAIL` and `SELENIUM_OTHER_USER_PASSWORD`.
 
 For cross-user tests, use a **separate `WebDriver`** for User B (create it in the test, quit it in a `finally`). Never share a browser session between users.
 

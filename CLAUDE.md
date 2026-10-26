@@ -26,11 +26,11 @@ npm test                                                   # all Playwright test
 npx playwright test tests/<file>.spec.js --reporter=line  # single file
 npx playwright test -g "<test title>"                      # single test by name
 npm run test:ui / npm run test:report
-./run-tests.sh [all|playwright|selenium]                   # both suites in Docker (run-tests.cmd on Windows)
+./run-tests.sh [all|playwright|selenium]                   # both suites in Docker, in parallel (run-tests.cmd on Windows)
 docker compose run --rm --build playwright                 # one suite; or `selenium`
 ```
 
-Docker setup: `docker/playwright.Dockerfile` and `docker/selenium.Dockerfile` (each with its own `.dockerignore`), wired up in `docker-compose.yml`. Reports go to `./reports/` (gitignored). Never use `docker compose up`, because it starts both suites at once against the shared live account.
+Docker setup: `docker/playwright.Dockerfile` and `docker/selenium.Dockerfile` (each with its own `.dockerignore`), wired up in `docker-compose.yml`. Reports go to `./reports/` (gitignored). `docker compose up --build` runs both suites in parallel.
 
 What CI checks on PRs (`.github/workflows/ci.yml`) — run these locally before pushing schema/frontend changes:
 - `cd backend && node --check server.js && node --check app.js`
@@ -66,7 +66,7 @@ Layered: `routes → controllers → services → repositories → Prisma` (`bac
 - Specs go in `tests/<feature-name>.spec.js` (JavaScript).
 - Locator priority: `data-testid` > role > label/placeholder > id > CSS class. No `page.waitForTimeout()`; use web-first `expect(...)` assertions.
 - Tests must be self-contained (login → action → assert) and clean up their own data (e.g. clear bookings), since all runs share the live account.
-- Test account: `rahulshetty1@gmail.com` / `Magiclife1!`
+- Test accounts: Playwright uses `rahulshetty1@gmail.com` / `Magiclife1!` (plus `rahulshetty1@yahoo.com` as the second user). Selenium uses its own pair (`selenium/.../config/Config.java`, overridable with `SELENIUM_*` env vars), which `BaseTest` registers when missing. Data is per user, so the two suites can run in parallel. Within a suite, tests still run serially (`workers: 1` / `parallel="none"`), and two runs of the same suite must not overlap.
 - Full standards: `.claude/skills/playwright-best-practices/SKILL.md`. Domain reference (API, business rules, user flows, UI selectors): `.claude/skills/eventhub-domain/`.
 - Workspace agents: `.github/agents/generate-tests.agent.md` creates and validates Playwright tests; `.github/agents/review-tests.agent.md` reviews Playwright tests; `.github/agents/generate-tests-selenium-java.agent.md` creates and validates Selenium Java tests; `.github/agents/review-tests-selenium-java.agent.md` reviews Selenium Java tests; `.github/agents/playwright-best-practices.agent.md` provides the Playwright testing standards; `.github/agents/selenium-best-practices.agent.md` provides Selenium testing standards; `.github/agents/test-strategy.agent.md` maps scenarios to test pyramid layers.
 - Selenium tests are Core Java (TestNG + Maven) in a separate `selenium/` module, never under `tests/`. Standards: `.github/agents/selenium-best-practices.agent.md` (source: `.claude/skills/selenium-best-practices/SKILL.md`). Run with `mvn -f selenium/pom.xml test`.
