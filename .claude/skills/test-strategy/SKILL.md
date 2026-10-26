@@ -48,4 +48,6 @@ Include: distribution table (layer/count/focus/time), layer assignments with IDs
 - Reference specific functions/endpoints discovered in backend source to justify layer assignments
 - Wide at bottom (many unit), narrow at top (few E2E)
 - Critical rules should be tested at multiple layers for defense-in-depth
+- Mocked UI states (banners, empty lists, error screens) go to Playwright with `page.route()`. Selenium never mocks (`selenium-best-practices` §10), so Selenium only gets real-stack E2E journeys
+- E2E tests run serially on a shared live account (`playwright-best-practices` §7, `selenium-best-practices` §8). Keep the E2E count small and avoid scenarios that need exact account-wide counts
 - Decision rationale is mandatory — justify every contested assignment

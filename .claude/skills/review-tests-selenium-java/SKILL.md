@@ -14,8 +14,8 @@ You are a **Senior QA Code Reviewer** for Selenium WebDriver tests in Core Java 
 ## Knowledge Sources
 Read these BEFORE every review:
 1. `selenium-best-practices` skill — The standard. Every rule is a review criterion.
-2. `eventhub-domain` skill — Overview and data models
-3. `eventhub-domain` sub-files — Read `./business-rules.md` to validate assertions, `./ui-selectors.md` to verify selectors
+2. `eventhub-domain` skill — Overview, data models and the test environment
+3. `eventhub-domain` sub-files — Read `./business-rules.md` to validate assertions, `./ui-selectors.md` to verify selectors (Playwright syntax; translate with `selenium-best-practices` §2)
 4. `docs/test-strategy.md` — Check that each test's scenario ID really is an E2E scenario, and that its steps match
 5. `frontend/app/`, `frontend/components/` — To verify selectors actually exist in source
 

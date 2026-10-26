@@ -11,7 +11,9 @@ This document defines the testing standards, patterns, and best practices for wr
 
 Playwright is the project's primary E2E tool (see `playwright-best-practices`). Use Selenium when a task explicitly asks for it, or when driving the browser through the Selenium MCP server.
 
-Loaded by `/generate-tests-selenium-java` (writes and runs Selenium Java tests), `/review-tests-selenium-java` (reviews them) and `/test-strategy`.
+Loaded by `/generate-tests-selenium-java` (writes and runs Selenium Java tests), `/review-tests-selenium-java` (reviews them) and `/test-strategy`. Both best-practices skills share the same locator priority, shared-account rules and EventHub domain facts. If you change a rule here, check whether `playwright-best-practices` needs the same change.
+
+Domain knowledge lives in the `eventhub-domain` skill: `ui-selectors.md` for selectors (written in Playwright syntax; §2 shows the `By` equivalents), `business-rules.md` for what to assert, `user-flows.md` for test steps and test accounts, `api-reference.md` for API setup and cleanup (§8).
 
 "Core Java" here means plain Java and the JDK: no Spring, no Serenity, no Cucumber, no RestAssured. The only libraries are Selenium, TestNG, and Jackson (the JDK has no JSON parser).
 
@@ -121,10 +123,11 @@ selenium/
     ├── config/   Config.java
     ├── base/     DriverFactory.java, BaseTest.java
     ├── api/      ApiClient.java            (login, create/delete bookings)
-    ├── pages/    BookingsPage.java, BookingDetailPage.java, EventDetailPage.java
-    ├── utils/    Locators.java, Screenshots.java
-    └── tests/    BookingFlowTest.java, CrossUserBookingTest.java
+    ├── pages/    BookingsPage.java, BookingDetailPage.java, Toast.java
+    ├── utils/    Locators.java, Screenshots.java, Visibility.java
+    └── tests/    BookingFlowTest.java
 ```
+Add new page objects and test classes (for example `EventDetailPage`, `CrossUserBookingTest`) next to these as features are covered.
 - Keep Selenium code in `selenium/`, never under `tests/`, which belongs to Playwright (`testDir: ./tests`)
 - Test classes: `<Feature>Test.java` in PascalCase (`BookingFlowTest`, `CrossUserBookingTest`)
 - Test methods: `tc<NNN>_<whatIsVerified>` in camelCase, with the full scenario title in `description`:
@@ -138,7 +141,7 @@ selenium/
 
 ## 2. Locator Strategy (Priority Order)
 
-Selenium has no role or label locators, so the priority list below is built around CSS. Same principle as Playwright: the most stable hook wins. Put the helpers in one place:
+Selenium has no role or label locators, so the priority list below is built around CSS. Same principle as Playwright: the most stable hook wins. `eventhub-domain/ui-selectors.md` lists the hooks in Playwright syntax: `getByTestId('x')` becomes `Locators.testId("x")`, `#id` stays `By.id("id")`, and `getByLabel`/`getByPlaceholder` become the input's id or a `[placeholder='...']` CSS selector. Put the helpers in one place:
 
 ```java
 // src/test/java/com/eventhub/utils/Locators.java

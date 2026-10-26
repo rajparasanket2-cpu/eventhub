@@ -8,7 +8,7 @@ EventHub is a full-stack event ticket booking platform built for QA training. Us
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript + JSX, Tailwind, React Query v5 — port 3000
 - **Backend**: Express 4, Prisma 5, MySQL 8 — port 3001, Swagger UI at `/api/docs`
 - **Auth**: JWT (7-day expiry, bcryptjs); all `/api/events` and `/api/bookings` routes require `Authorization: Bearer <token>`
-- **Tests**: Playwright E2E, Chromium only
+- **Tests**: Playwright E2E (`tests/`, Chromium) and Selenium WebDriver E2E (`selenium/`, Core Java + TestNG, Chrome)
 
 ## Commands
 All from the repo root unless noted.

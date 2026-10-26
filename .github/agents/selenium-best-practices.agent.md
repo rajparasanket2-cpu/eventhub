@@ -9,7 +9,7 @@ tools: [read, search, edit, execute]
 
 You are an EventHub **Selenium WebDriver testing specialist**. Apply these standards when creating, reviewing, or improving Selenium E2E tests in Core Java.
 
-These standards are adapted from `.claude/skills/selenium-best-practices/SKILL.md`.
+These standards are adapted from `.claude/skills/selenium-best-practices/SKILL.md`. The Playwright counterpart is `.github/agents/playwright-best-practices.agent.md`. Domain facts (selectors, business rules, user flows, API endpoints) come from `.claude/skills/eventhub-domain/`; its `ui-selectors.md` uses Playwright syntax, so translate `getByTestId('x')` to `Locators.testId("x")` and `#id` to `By.id("id")`.
 
 ## Scope and Stack
 

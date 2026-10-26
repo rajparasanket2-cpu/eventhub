@@ -12,9 +12,9 @@ You are a **Senior Test Automation Engineer** who writes AND validates Selenium 
 ## Knowledge Sources
 Read these BEFORE writing any test:
 `docs/test-strategy.md` — refer to this file for E2E test steps and which scenarios are E2E.
-1. `selenium-best-practices` skill — Your coding standards. Follow every rule.
-2. `eventhub-domain` skill — Overview and data models
-3. `eventhub-domain` sub-files — Read `./ui-selectors.md` for selectors, `./business-rules.md` for assertions, `./user-flows.md` for test steps
+1. `selenium-best-practices` skill — Your coding standards. Follow every rule, especially §7–§8 (API login, API setup/cleanup, shared account)
+2. `eventhub-domain` skill — Overview, data models and the test environment
+3. `eventhub-domain` sub-files — Read `./ui-selectors.md` for selectors (Playwright syntax; translate with `selenium-best-practices` §2), `./business-rules.md` for assertions, `./user-flows.md` for test steps and test accounts, `./api-reference.md` for setup and cleanup calls
 4. `selenium/src/test/java/**` — Existing Selenium tests, page objects and helpers to reuse and match
 5. `tests/*.spec.js` — Existing Playwright tests for the same flows. Use them for steps and verified selectors, not for code style
 6. `frontend/app/`, `frontend/components/` — Verify selectors exist in actual source code

@@ -13,8 +13,13 @@ EventHub is a full-stack event ticket booking platform. Users browse events, boo
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, React Query v5
 - **Backend**: Express.js 4.21, Prisma ORM 5.22, MySQL 8+
 - **Auth**: JWT (7-day expiry), bcryptjs password hashing
-- **Testing**: Playwright (E2E), Chromium only
+- **Testing**: Playwright E2E (`tests/`, JavaScript, Chromium) and Selenium WebDriver E2E (`selenium/`, Core Java + TestNG + Maven, Chrome). Both run serially against the live site with a shared test account
 - **API Docs**: Swagger UI at `/api/docs`
+
+## Test Environment
+- **Site**: `https://eventhub.rahulshettyacademy.com`
+- **API**: `https://api.eventhub.rahulshettyacademy.com/api` (the site's own `/api` path serves the Next.js app, not the backend)
+- **Coding standards**: `playwright-best-practices` (Playwright) and `selenium-best-practices` (Selenium Java). This skill holds the facts both suites assert on; those skills hold how to write the tests
 
 ## Architecture
 ```

@@ -9,7 +9,7 @@ tools: [read, search, edit, execute, "playwright/*"]
 
 You are a **Playwright Test Automation Specialist** for EventHub. Help create, review, or improve E2E tests that are reliable, maintainable, and validate user-visible behavior.
 
-These workspace standards are adapted from `.claude/skills/playwright-best-practices/SKILL.md`.
+These workspace standards are adapted from `.claude/skills/playwright-best-practices/SKILL.md`. The Selenium Java counterpart is `.github/agents/selenium-best-practices.agent.md`. Domain facts (selectors, business rules, user flows, API endpoints) come from `.claude/skills/eventhub-domain/`.
 
 ## Project Conventions
 
@@ -18,6 +18,7 @@ These workspace standards are adapted from `.claude/skills/playwright-best-pract
 - Match the repository's existing JavaScript test patterns and use `@playwright/test`.
 - Keep tests self-contained. Each test should establish its own state, perform an action, assert the outcome, and clean up data it creates when applicable.
 - Use unique data for created records to avoid collisions and test pollution.
+- Tests target the live site with one shared account and run serially (`workers: 1`). Log in through the API and inject the token into `localStorage.eventhub_token`, create data through the API, delete only the IDs you created, and never use "Clear all bookings" as cleanup. Find your own card by its booking ref instead of assuming the first card is yours.
 
 ## Locator Strategy
 

@@ -13,8 +13,13 @@ EventHub is a full-stack event ticket booking platform. Users browse events, boo
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, React Query v5
 - **Backend**: Express.js 4.21, Prisma ORM 5.22, MySQL 8+
 - **Auth**: JWT (7-day expiry), bcryptjs password hashing
-- **Testing**: Playwright (E2E), Chromium only
+- **Testing**: Playwright E2E (`tests/`, JavaScript, Chromium) and Selenium WebDriver E2E (`selenium/`, Core Java + TestNG + Maven, Chrome). Both run serially against the live site with a shared test account
 - **API Docs**: Swagger UI at `/api/docs`
+
+## Test Environment
+- **Site**: `https://eventhub.rahulshettyacademy.com`
+- **API**: `https://api.eventhub.rahulshettyacademy.com/api` (the site's own `/api` path serves the Next.js app, not the backend)
+- **Coding standards**: `playwright-best-practices` (Playwright) and `selenium-best-practices` (Selenium Java). This skill holds the facts both suites assert on; those skills hold how to write the tests
 
 ## Architecture
 ```
@@ -89,9 +94,8 @@ Load these based on what the current task needs:
 - **UI selectors for test automation** → read `./ui-selectors.md`
 - **User flows, test scenarios & test data** → read `./user-flows.md`
 
-
-
 ---
+
 # EventHub Business Rules
 
 ## 1. User Journey
@@ -113,19 +117,20 @@ Load these based on what the current task needs:
 - When limit reached, the OLDEST event is automatically deleted (FIFO replacement)
 - Static events are not counted toward this limit
 - Static events cannot be edited or deleted
-- Events page shows max 9 events at a time with pagination
+- Events page shows 12 events per page, with pagination
 
 ## 4. Booking Limits (FIFO Pruning)
 - Max **9 bookings** per user
 - When limit reached, the OLDEST booking is automatically deleted (FIFO replacement)
-- Bookings page shows max 9 bookings at a time
+- The bookings list never holds more than 9 bookings, because of the limit above
 - Booking deletion (cancellation) immediately frees seats
-- "Clear All Bookings" button removes all bookings in one go
+- "Clear all bookings" (top of the bookings page, behind a native `confirm()`) removes all bookings in one go. The page labels it "Do this often for clean test data"
+- Test impact: the test account is shared by every run, so tests must delete only the bookings they created and must not use "Clear all bookings" as cleanup
 
-## 5. Sandbox Warning Banners
-- **Events page**: Banner appears when user has close to or more than 6 events displayed, warning about sandbox limits ("sandbox holds up to 6 events and 9 bookings")
-- **Bookings page**: Conditional banner also appears giving heads-up about booking limits
-- Banners are hidden when counts are low (e.g., fewer than 5 events)
+## 5. Sandbox Warning Banner
+- **Events page only**: the banner appears when more than 5 events are listed (6 or more). Text: "Your sandbox holds up to 9 bookings and you can create up to 6 custom events. When either limit is reached, the oldest entry is automatically replaced."
+- It's hidden when 5 or fewer events are listed (`sandbox-banner.spec.js` checks 6 shown, 4 hidden)
+- The bookings page has no sandbox banner
 
 ## 6. Per-User Seat Availability
 - For static events: `availableSeats` is a fixed DB field
@@ -150,10 +155,7 @@ Load these based on what the current task needs:
 - `totalPrice = event.price x quantity`
 - Price is per-ticket in the Event model
 
-
-
-
-----
+---
 
 # EventHub User Flows & Test Data
 
@@ -227,7 +229,8 @@ Run `npm run seed` to insert:
 | Gmail User | rahulshetty1@gmail.com   | Magiclife1! |
 | Yahoo User | rahulshetty1@yahoo.com   | Magiclife1! |
 
---
+---
+
 # EventHub API Reference
 
 ## Authentication (No Auth Required)
@@ -267,3 +270,72 @@ Run `npm run seed` to insert:
 | Insufficient seats        | 400       | Insufficient seats available         |
 | Invalid event date (past) | 400       | Event date must be in the future     |
 | Missing required fields   | 400       | Validation error details             |
+
+---
+
+# EventHub UI Selectors Reference
+
+Selectors are written in Playwright syntax. For Selenium Java, translate them as described in `selenium-best-practices` §2: `getByTestId('x')` → `Locators.testId("x")`, `#id` → `By.id("id")`, `getByPlaceholder('p')` → `By.cssSelector("[placeholder='p']")`, and labels → the input's id.
+
+Prefer `data-testid` hooks (listed at the end) over the other selectors whenever one exists.
+
+## Login Page
+- Email input: `getByPlaceholder('you@email.com')` or `getByLabel('Email')` (id `email`)
+- Password input: `getByLabel('Password')` or `getByPlaceholder('••••••')` (id `password`)
+- Login button: `#login-btn`
+
+## Home Page
+- Browse Events link: `getByRole('link', { name: 'Browse Events →' })` (tests wait for it to confirm login finished)
+- Navigation: `getByTestId('nav-home')`, `getByTestId('nav-events')`, `getByTestId('nav-bookings')`
+- Logged-in user: `getByTestId('user-email-display')`; logout: `getByTestId('logout-btn')`
+
+## Register Page
+- Email: `getByTestId('register-email')`
+- Password: `getByTestId('register-password')`
+- Submit: `getByTestId('register-btn')`
+
+## Events Page
+- Event cards: `getByTestId('event-card')`
+- Book Now button: `getByTestId('book-now-btn')` (inside card)
+- Sandbox banner: `getByText(/sandbox holds up to/i)`
+- Category/City/Search filters: form controls
+
+## Event Detail / Booking Form
+- Ticket count display: `#ticket-count`
+- Increment/Decrement: `button:has-text("+")` / `button:has-text("-")`
+- Full Name: `getByLabel('Full Name')` (id `customerName`)
+- Email: `#customer-email` or `getByTestId('customer-email')`
+- Phone: `getByPlaceholder('+91 98765 43210')` (id `phone`)
+- Confirm: `.confirm-booking-btn` (id `confirm-booking`)
+- Booking Ref on the confirmation card: `getByTestId('booking-ref')` (also `.booking-ref`)
+
+## Admin Event Form
+- Form: `getByTestId('admin-event-form')`
+- Title: `#event-title-input` or `getByTestId('event-title-input')`
+- Description: `#admin-event-form textarea`
+- City: `getByLabel('City')`
+- Venue: `getByLabel('Venue')`
+- Date: `getByLabel('Event Date & Time')`
+- Price: `getByLabel('Price ($)')`
+- Seats: `getByLabel('Total Seats')`
+- Add button: `#add-event-btn` or `getByTestId('add-event-btn')`
+- Event rows: `getByTestId('event-table-row')`, with `edit-event-btn` / `delete-event-btn` inside
+
+## Bookings Page
+- Booking cards: `getByTestId('booking-card')`
+- Booking ref on a card: `getByTestId('booking-ref')` (also `.booking-ref`). Filter cards by it on the shared account
+- Booking id on a card: `getByTestId('booking-id')`
+- Cancel from a card: `getByTestId('cancel-booking-btn')`, then confirm with `getByTestId('confirm-dialog-yes')` in the "Cancel this booking?" dialog
+- View Details link: `getByRole('link', { name: 'View Details' })`
+- Clear all: `getByRole('button', { name: 'Clear all bookings' })` at the top of the page; it opens a native `confirm()`
+
+## Booking Detail Page
+- Booking ref: `span.font-mono.font-bold` (no `data-testid` yet)
+- Event title: `h1`
+- Check refund: `#check-refund-btn` or `getByTestId('check-refund-btn')`
+- Refund spinner: `#refund-spinner` or `getByTestId('refund-spinner')`
+- Refund result: `#refund-result` or `getByTestId('refund-result')`
+- Cancel button: `getByRole('button', { name: 'Cancel Booking' })` (no `data-testid` on this page), then confirm with `getByTestId('confirm-dialog-yes')` in the "Cancel this booking?" dialog
+
+## All `data-testid` Hooks in the Frontend
+`nav-home`, `nav-events`, `nav-bookings`, `user-email-display`, `logout-btn`, `register-email`, `register-password`, `register-btn`, `event-card`, `book-now-btn`, `customer-email`, `booking-ref`, `admin-event-form`, `event-title-input`, `add-event-btn`, `event-table-row`, `edit-event-btn`, `delete-event-btn`, `booking-card`, `booking-id`, `check-refund-btn`, `refund-spinner`, `refund-result`, `cancel-booking-btn`, `confirm-dialog-yes`
