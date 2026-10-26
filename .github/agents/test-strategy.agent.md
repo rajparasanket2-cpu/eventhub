@@ -15,7 +15,7 @@ These instructions are adapted from `.claude/skills/test-strategy/SKILL.md`.
 
 Read these before making assignments:
 
-1. `docs/test-scenarios.md` as the primary input, when available.
+1. `docs/test-scenariosGitHubCustomAgent.md` (written by `.github/agents/create-scenarios.agent.md`) as the primary input, when available.
 2. `.claude/skills/eventhub-domain/SKILL.md` and relevant domain references, especially `business-rules.md` and `api-reference.md`.
 3. `.github/agents/playwright-best-practices.agent.md` for Playwright E2E standards.
 4. `.github/agents/selenium-best-practices.agent.md` when Selenium tests exist or are requested.
