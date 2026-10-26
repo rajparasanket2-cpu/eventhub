@@ -1,0 +1,131 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# E2E Tests – Playwright + Selenium (Java)
+#
+# PURPOSE:
+#   Runs every Playwright spec (tests/) and every Selenium Java test (selenium/)
+#   against the live site on each push to main, and uploads both HTML reports
+#   as artifacts so results can be reviewed from the Actions run page.
+#
+# TRIGGER: push to main (plus manual runs from the Actions tab)
+#
+# ORDER:
+#   playwright → selenium. Both suites use the same live test account, so they
+#   must never run at the same time. Selenium still runs when Playwright fails
+#   (`if: always()`), and each job fails on its own test failures.
+#
+# REPORTS (artifacts, kept 30 days):
+#   playwright-report-<run>  – Playwright HTML report (open index.html)
+#   selenium-report-<run>    – TestNG HTML report (open index.html or emailable-report.html)
+#   Screenshots/videos of failures are included when there are any.
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: E2E Tests – Playwright + Selenium
+
+on:
+  push:
+    branches: [main]
+
+  # Allow manual runs from the GitHub Actions UI
+  workflow_dispatch:
+
+# Queue runs instead of cancelling: a cancelled run can leave test bookings on
+# the shared account, and two runs at once would interfere with each other.
+concurrency:
+  group: e2e-tests
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '22'
+  JAVA_VERSION: '21'
+
+jobs:
+
+  # ╔═══════════════════════════════════════════════════════════════════════════
+  # ║  Playwright – all specs in tests/, Chromium, HTML report
+  # ╚═══════════════════════════════════════════════════════════════════════════
+  playwright:
+    name: Playwright Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Only Chromium is used (playwright.config.ts); --with-deps adds the OS libraries
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      # Line output in the log, HTML report in playwright-report/.
+      # The job fails if any test fails; the upload steps below still run.
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=line,html
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Playwright failure screenshots and videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results-${{ github.run_id }}
+          path: test-results/
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # ╔═══════════════════════════════════════════════════════════════════════════
+  # ║  Selenium – all TestNG classes in selenium/testng.xml, headless Chrome
+  # ╚═══════════════════════════════════════════════════════════════════════════
+  selenium:
+    name: Selenium Java Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: playwright
+    if: ${{ always() }}   # run after Playwright even when it failed, never alongside it
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+          cache-dependency-path: selenium/pom.xml
+
+      # Google Chrome comes preinstalled on ubuntu-latest; Selenium Manager
+      # downloads the matching ChromeDriver at runtime.
+      - name: Show Chrome version
+        run: google-chrome --version
+
+      # DriverFactory runs Chrome headless unless -Dheaded=true is passed
+      - name: Run Selenium tests
+        run: mvn -B -f selenium/pom.xml clean test
+
+      - name: Upload Selenium HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-report-${{ github.run_id }}
+          path: |
+            selenium/target/surefire-reports/
+            selenium/target/screenshots/
+          retention-days: 30
+          if-no-files-found: warn
