@@ -65,13 +65,15 @@ Layered: `routes → controllers → services → repositories → Prisma` (`bac
 - Tests must be self-contained (login → action → assert) and clean up their own data (e.g. clear bookings), since all runs share the live account.
 - Test account: `rahulshetty1@gmail.com` / `Magiclife1!`
 - Full standards: `.claude/skills/playwright-best-practices/SKILL.md`. Domain reference (API, business rules, user flows, UI selectors): `.claude/skills/eventhub-domain/`.
-- Selenium tests are Core Java (TestNG + Maven) in a separate `selenium/` module, never under `tests/`. Standards: `.claude/skills/selenium-best-practices/SKILL.md`. Run with `mvn -f selenium/pom.xml test`.
+- Workspace agents: `.github/agents/generate-tests.agent.md` creates and validates Playwright tests; `.github/agents/review-tests.agent.md` reviews Playwright tests; `.github/agents/generate-tests-selenium-java.agent.md` creates and validates Selenium Java tests; `.github/agents/review-tests-selenium-java.agent.md` reviews Selenium Java tests; `.github/agents/playwright-best-practices.agent.md` provides the Playwright testing standards; `.github/agents/selenium-best-practices.agent.md` provides Selenium testing standards; `.github/agents/test-strategy.agent.md` maps scenarios to test pyramid layers.
+- Selenium tests are Core Java (TestNG + Maven) in a separate `selenium/` module, never under `tests/`. Standards: `.github/agents/selenium-best-practices.agent.md` (source: `.claude/skills/selenium-best-practices/SKILL.md`). Run with `mvn -f selenium/pom.xml test`.
 
 ## Project skills (`.claude/skills/`)
 - `/generate-tests <feature>` — writes Playwright tests and validates them in a real browser
 - `/generate-tests-selenium-java <feature>` — writes Selenium WebDriver tests in Core Java and validates them in a real browser
 - `/review-tests <file>` — reviews Playwright test quality against the best-practices skill
 - `/review-tests-selenium-java <class>` — reviews Selenium Java test quality against `selenium-best-practices`
+- `.github/agents/review-tests-selenium-java.agent.md` — workspace agent for reviewing Selenium Java tests
 - `/create-scenarios <area>` — writes functional scenarios to `docs/test-scenarios.md`
 - `/test-strategy <scenarios>` — assigns scenarios to pyramid layers (`docs/test-strategy.md`)
 - `eventhub-domain`, `playwright-best-practices` and `selenium-best-practices` are reference-only skills loaded by the above.
