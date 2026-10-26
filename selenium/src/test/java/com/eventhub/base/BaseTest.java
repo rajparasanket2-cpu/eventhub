@@ -52,9 +52,15 @@ public abstract class BaseTest {
 
     /** The app reads the JWT from localStorage; it can only be set once the origin is loaded. */
     protected void loginInBrowser(String jwt) {
-        driver.get(Config.BASE_URL);
-        ((JavascriptExecutor) driver).executeScript("localStorage.setItem('eventhub_token', arguments[0]);", jwt);
-        driver.navigate().refresh();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(testId("nav-bookings")));
+        loginInBrowser(driver, jwt);
+    }
+
+    /** Same, for a second browser (e.g. another user in a cross-user test). */
+    protected static void loginInBrowser(WebDriver browser, String jwt) {
+        browser.get(Config.BASE_URL);
+        ((JavascriptExecutor) browser).executeScript("localStorage.setItem('eventhub_token', arguments[0]);", jwt);
+        browser.navigate().refresh();
+        new WebDriverWait(browser, Config.WAIT)
+                .until(ExpectedConditions.visibilityOfElementLocated(testId("nav-bookings")));
     }
 }

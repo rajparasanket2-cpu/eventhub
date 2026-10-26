@@ -123,13 +123,14 @@ selenium/
     ├── config/   Config.java
     ├── base/     DriverFactory.java, BaseTest.java
     ├── api/      ApiClient.java            (login, create/delete bookings)
-    ├── pages/    BookingsPage.java, BookingDetailPage.java, Toast.java
+    ├── pages/    BookingsPage.java, BookingDetailPage.java, EventDetailPage.java, AdminBookingsPage.java,
+    │             LoginPage.java, Navbar.java, Toast.java
     ├── utils/    Locators.java, Screenshots.java, Visibility.java
-    └── tests/    BookingFlowTest.java
+    └── tests/    BookingFlowTest.java, BookingJourneyTest.java, AdminBookingsTest.java, AccessControlTest.java
 ```
-Add new page objects and test classes (for example `EventDetailPage`, `CrossUserBookingTest`) next to these as features are covered.
+Add new page objects and test classes next to these as features are covered.
 - Keep Selenium code in `selenium/`, never under `tests/`, which belongs to Playwright (`testDir: ./tests`)
-- Test classes: `<Feature>Test.java` in PascalCase (`BookingFlowTest`, `CrossUserBookingTest`)
+- Test classes: `<Feature>Test.java` in PascalCase (`BookingFlowTest`, `AccessControlTest`)
 - Test methods: `tc<NNN>_<whatIsVerified>` in camelCase, with the full scenario title in `description`:
   ```java
   @Test(description = "TC-003: cancelling from the detail page shows a toast, redirects and deletes the booking")

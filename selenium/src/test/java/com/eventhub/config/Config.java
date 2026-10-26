@@ -13,4 +13,8 @@ public final class Config {
 
     public static final String USER_EMAIL    = "rahulshetty1@gmail.com";
     public static final String USER_PASSWORD = "Magiclife1!";
+
+    /** Second account, for cross-user (sandbox isolation) tests. */
+    public static final String OTHER_USER_EMAIL    = "rahulshetty1@yahoo.com";
+    public static final String OTHER_USER_PASSWORD = "Magiclife1!";
 }

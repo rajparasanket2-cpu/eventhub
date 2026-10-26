@@ -9,6 +9,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 import static com.eventhub.utils.Locators.headingText;
 import static com.eventhub.utils.Locators.testId;
 
@@ -24,6 +26,10 @@ public class BookingsPage {
     private final By viewDetails = By.linkText("View Details");
     private final By cancelBtn   = testId("cancel-booking-btn");
     private final By bookingId   = testId("booking-id");
+    // data-testid="booking-ref" is in the frontend source but not deployed to the live site yet
+    private final By bookingRef  = By.cssSelector(".booking-ref");
+    private final By dialog      = By.cssSelector("[role='dialog']");
+    private final By confirmYes  = testId("confirm-dialog-yes");
 
     public BookingsPage(WebDriver driver) {
         this.driver = driver;
@@ -81,6 +87,41 @@ public class BookingsPage {
     public BookingDetailPage viewDetails(String bookingRef) {
         cardFor(bookingRef).findElement(viewDetails).click();
         return new BookingDetailPage(driver).waitForLoaded();
+    }
+
+    /** Booking refs of the listed cards, top to bottom (the list is ordered newest first). */
+    public List<String> refsInOrder() {
+        return driver.findElements(cards).stream()
+                .map(card -> card.findElement(bookingRef).getText().trim())
+                .toList();
+    }
+
+    public String currentUrl() {
+        return driver.getCurrentUrl();
+    }
+
+    /** Clicks "Cancel Booking" on this ref's card and returns the confirmation dialog's text. */
+    public String openCancelDialog(String bookingRef) {
+        cardFor(bookingRef).findElement(cancelBtn).click();
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(dialog)).getText();
+    }
+
+    /**
+     * Confirms the open dialog. Returns right after the click so the caller can
+     * check the toast before it auto-dismisses.
+     */
+    public void confirmCancel() {
+        driver.findElement(dialog).findElement(confirmYes).click();
+    }
+
+    /** Waits for the confirmation dialog to close; returns false if it's still open. */
+    public boolean waitForDialogClosed() {
+        try {
+            wait.until(ExpectedConditions.numberOfElementsToBe(dialog, 0));
+            return true;
+        } catch (org.openqa.selenium.TimeoutException e) {
+            return false;
+        }
     }
 
     /** Waits until no card for this ref is shown; returns false if it's still there after the wait. */

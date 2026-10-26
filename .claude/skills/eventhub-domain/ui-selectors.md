@@ -32,7 +32,7 @@ Prefer `data-testid` hooks (listed at the end) over the other selectors whenever
 - Email: `#customer-email` or `getByTestId('customer-email')`
 - Phone: `getByPlaceholder('+91 98765 43210')` (id `phone`)
 - Confirm: `.confirm-booking-btn` (id `confirm-booking`)
-- Booking Ref on the confirmation card: `getByTestId('booking-ref')` (also `.booking-ref`)
+- Booking Ref on the confirmation card: `.booking-ref` (`data-testid="booking-ref"` is in the source but not deployed to the live site yet)
 
 ## Admin Event Form
 - Form: `getByTestId('admin-event-form')`
@@ -48,7 +48,7 @@ Prefer `data-testid` hooks (listed at the end) over the other selectors whenever
 
 ## Bookings Page
 - Booking cards: `getByTestId('booking-card')`
-- Booking ref on a card: `getByTestId('booking-ref')` (also `.booking-ref`). Filter cards by it on the shared account
+- Booking ref on a card: `.booking-ref` (`data-testid="booking-ref"` is in the source but not deployed to the live site yet). Filter cards by it on the shared account
 - Booking id on a card: `getByTestId('booking-id')`
 - Cancel from a card: `getByTestId('cancel-booking-btn')`, then confirm with `getByTestId('confirm-dialog-yes')` in the "Cancel this booking?" dialog
 - View Details link: `getByRole('link', { name: 'View Details' })`
@@ -63,4 +63,4 @@ Prefer `data-testid` hooks (listed at the end) over the other selectors whenever
 - Cancel button: `getByRole('button', { name: 'Cancel Booking' })` (no `data-testid` on this page), then confirm with `getByTestId('confirm-dialog-yes')` in the "Cancel this booking?" dialog
 
 ## All `data-testid` Hooks in the Frontend
-`nav-home`, `nav-events`, `nav-bookings`, `user-email-display`, `logout-btn`, `register-email`, `register-password`, `register-btn`, `event-card`, `book-now-btn`, `customer-email`, `booking-ref`, `admin-event-form`, `event-title-input`, `add-event-btn`, `event-table-row`, `edit-event-btn`, `delete-event-btn`, `booking-card`, `booking-id`, `check-refund-btn`, `refund-spinner`, `refund-result`, `cancel-booking-btn`, `confirm-dialog-yes`
+`nav-home`, `nav-events`, `nav-bookings`, `user-email-display`, `logout-btn`, `register-email`, `register-password`, `register-btn`, `event-card`, `book-now-btn`, `customer-email`, `booking-ref` (source only, not yet live), `admin-event-form`, `event-title-input`, `add-event-btn`, `event-table-row`, `edit-event-btn`, `delete-event-btn`, `booking-card`, `booking-id`, `check-refund-btn`, `refund-spinner`, `refund-result`, `cancel-booking-btn`, `confirm-dialog-yes`

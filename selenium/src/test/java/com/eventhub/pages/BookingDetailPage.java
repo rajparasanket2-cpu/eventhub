@@ -23,6 +23,8 @@ public class BookingDetailPage {
     private final By cancelBtn      = buttonText("Cancel Booking");
     private final By dialog         = By.cssSelector("[role='dialog']");
     private final By confirmYes     = testId("confirm-dialog-yes");
+    private final By errorTitle     = By.xpath("//main//h3[normalize-space()='Access Denied' or normalize-space()='Booking not found']");
+    private final By viewMyBookings = buttonText("View My Bookings");
 
     public BookingDetailPage(WebDriver driver) {
         this.driver = driver;
@@ -40,6 +42,33 @@ public class BookingDetailPage {
         return this;
     }
 
+    /**
+     * Opens a booking this user can't see (someone else's, or deleted) and waits
+     * for the error state instead of the booking. Returns the error title,
+     * e.g. "Access Denied" or "Booking not found".
+     */
+    public String openExpectingError(long bookingId) {
+        driver.get(Config.BASE_URL + "/bookings/" + bookingId);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(errorTitle)).getText();
+    }
+
+    public String errorDescription() {
+        return driver.findElement(errorTitle).findElement(By.xpath("following-sibling::p")).getText();
+    }
+
+    public boolean hasViewMyBookingsButton() {
+        return Visibility.isDisplayed(driver, viewMyBookings);
+    }
+
+    public BookingsPage clickViewMyBookings() {
+        wait.until(ExpectedConditions.elementToBeClickable(viewMyBookings)).click();
+        return new BookingsPage(driver).waitForLoaded();
+    }
+
+    public String pageSource() {
+        return driver.getPageSource();
+    }
+
     public String currentUrl() {
         return driver.getCurrentUrl();
     }
@@ -55,6 +84,11 @@ public class BookingDetailPage {
 
     public boolean isSectionVisible(String sectionTitle) {
         return Visibility.appears(wait, headingText(sectionTitle));
+    }
+
+    /** Is this section heading shown right now? No wait: use it to check absence once the page has loaded. */
+    public boolean hasSection(String sectionTitle) {
+        return Visibility.isDisplayed(driver, headingText(sectionTitle));
     }
 
     public String mainText() {

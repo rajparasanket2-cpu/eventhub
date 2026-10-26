@@ -4,6 +4,13 @@
   <test name="Booking">
     <classes>
       <class name="com.eventhub.tests.BookingFlowTest"/>
+      <class name="com.eventhub.tests.BookingJourneyTest"/>
+      <class name="com.eventhub.tests.AdminBookingsTest"/>
+    </classes>
+  </test>
+  <test name="Access control">
+    <classes>
+      <class name="com.eventhub.tests.AccessControlTest"/>
     </classes>
   </test>
 </suite>

@@ -54,6 +54,23 @@ public class ApiClient {
                 b.get("quantity").asInt(), b.get("totalPrice").asDouble());
     }
 
+    /** Looks up a booking by its ref, e.g. one created through the UI, so the test can record its id. */
+    public Booking findBookingByRef(String token, String bookingRef) {
+        JsonNode b = send("GET", "/bookings/ref/" + bookingRef, token, null, 200).body().get("data");
+        return new Booking(b.get("id").asLong(), b.get("bookingRef").asText(),
+                b.get("quantity").asInt(), b.get("totalPrice").asDouble());
+    }
+
+    /** Total number of this user's bookings (pagination.total of GET /bookings). */
+    public int totalBookings(String token) {
+        return send("GET", "/bookings?limit=1", token, null, 200).body().get("pagination").get("total").asInt();
+    }
+
+    /** This user's available seats for an event (seats are computed per user). */
+    public int availableSeats(String token, long eventId) {
+        return send("GET", "/events/" + eventId, token, null, 200).body().get("data").get("availableSeats").asInt();
+    }
+
     /** HTTP status of GET /bookings/:id (200 = exists, 404 = gone, 403 = someone else's). */
     public int bookingStatus(String token, long bookingId) {
         return send("GET", "/bookings/" + bookingId, token, null, -1).status();
