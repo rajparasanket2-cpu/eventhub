@@ -78,3 +78,12 @@ npx playwright test tests/<file>.spec.js --reporter=line  # Run single test
 - Tests: JavaScript with Playwright test runner
 - Use meaningful variable names, add step comments in tests
 - Keep functions focused and single-responsibility
+
+## Workspace Test Agents
+- `.github/agents/generate-tests.agent.md` — creates and validates Playwright tests
+- `.github/agents/review-tests.agent.md` — reviews Playwright tests
+- `.github/agents/generate-tests-selenium-java.agent.md` — creates and validates Selenium Java tests
+- `.github/agents/review-tests-selenium-java.agent.md` — reviews Selenium Java tests
+- `.github/agents/playwright-best-practices.agent.md` — Playwright testing standards
+- `.github/agents/selenium-best-practices.agent.md` — Selenium testing standards
+- `.github/agents/test-strategy.agent.md` — maps scenarios to test pyramid layers
