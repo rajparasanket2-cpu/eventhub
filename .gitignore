@@ -37,7 +37,3 @@ selenium/target/
 
 # Claude Code worktrees
 .claude/worktrees/
-
-# Local duplicates of .github/agents/create-scenarios.agent.md and .claude/skills/eventhub-domain/
-/create-scenarios.agent.md
-/eventhub-domain.md
