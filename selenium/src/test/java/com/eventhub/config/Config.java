@@ -9,6 +9,8 @@ public final class Config {
     public static final String BASE_URL = System.getProperty("baseUrl", "https://eventhub.rahulshettyacademy.com");
     public static final String API_URL  = System.getProperty("apiUrl",  "https://api.eventhub.rahulshettyacademy.com/api");
     public static final boolean HEADED  = Boolean.getBoolean("headed");
+    /** Set by the Docker image, where Chrome runs as root and needs --no-sandbox. */
+    public static final boolean NO_SANDBOX = Boolean.parseBoolean(System.getenv("CHROME_NO_SANDBOX"));
     public static final Duration WAIT   = Duration.ofSeconds(5);
 
     public static final String USER_EMAIL    = "rahulshetty1@gmail.com";

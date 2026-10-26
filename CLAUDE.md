@@ -26,8 +26,11 @@ npm test                                                   # all Playwright test
 npx playwright test tests/<file>.spec.js --reporter=line  # single file
 npx playwright test -g "<test title>"                      # single test by name
 npm run test:ui / npm run test:report
-docker compose run tests                                   # tests in the Playwright Docker image
+./run-tests.sh [all|playwright|selenium]                   # both suites in Docker (run-tests.cmd on Windows)
+docker compose run --rm --build playwright                 # one suite; or `selenium`
 ```
+
+Docker setup: `docker/playwright.Dockerfile` and `docker/selenium.Dockerfile` (each with its own `.dockerignore`), wired up in `docker-compose.yml`. Reports go to `./reports/` (gitignored). Never use `docker compose up`, because it starts both suites at once against the shared live account.
 
 What CI checks on PRs (`.github/workflows/ci.yml`) — run these locally before pushing schema/frontend changes:
 - `cd backend && node --check server.js && node --check app.js`

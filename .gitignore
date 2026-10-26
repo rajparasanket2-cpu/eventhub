@@ -37,3 +37,6 @@ selenium/target/
 
 # Claude Code worktrees
 .claude/worktrees/
+
+# Reports from the Docker test runs (run-tests.sh / run-tests.cmd)
+reports/

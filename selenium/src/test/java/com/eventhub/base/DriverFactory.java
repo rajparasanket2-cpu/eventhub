@@ -15,6 +15,7 @@ public final class DriverFactory {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--window-size=1366,900");
         if (!Config.HEADED) options.addArguments("--headless=new");
+        if (Config.NO_SANDBOX) options.addArguments("--no-sandbox");
         options.setCapability("goog:loggingPrefs", Map.of("browser", "ALL"));
 
         WebDriver driver = new ChromeDriver(options);
