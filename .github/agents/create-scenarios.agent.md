@@ -35,7 +35,7 @@ For every feature/flow in the domain skill, apply ALL 6 lenses:
 | UI State | Are there conditional displays, loading states, empty states? |
 
 ## Output Format
-Write to **`docs/test-scenarios.md`** (consumed by `.github/agents/test-strategy.agent.md` and the `/test-strategy` skill). Use this template:
+Write to different file for GitHub Custom Agent **`docs/test-scenariosGitHubCustomAgent.md`** (consumed by `.github/agents/test-strategy.agent.md` and the `/test-strategy` skill). Use this template:
 
 ```
 ### TC-<NNN>: <Title>
