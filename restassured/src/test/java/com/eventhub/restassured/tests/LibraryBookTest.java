@@ -17,8 +17,8 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
- * Adds a book to the live Library API and reads it back by ID.
- * Unlike the course tests this calls a real server, so each run uses a unique ISBN and deletes the book afterwards.
+ * Adds a book to the live Library API, reads it back by ID, then deletes it.
+ * Unlike the course tests this calls a real server, so each run uses a unique ISBN.
  */
 public class LibraryBookTest {
     private static final String BASE_URI = "http://216.10.245.166";
@@ -35,8 +35,8 @@ public class LibraryBookTest {
                 .build();
     }
 
-    @Test(description = "TC82: a book added through Addbook.php is returned with the same details by GetBook.php?ID")
-    public void tc82_addBookAndGetItById() {
+    @Test(description = "TC82: a book added through Addbook.php is returned with the same details by GetBook.php?ID, then deleted")
+    public void tc82_addGetAndDeleteBook() {
         // -- Step 1: build a book with a unique ISBN, since the server is shared and rejects duplicate IDs --
         String name = "Learn Appium Automation with Java";
         String isbn = "ra" + UUID.randomUUID().toString().substring(0, 8);
@@ -70,19 +70,33 @@ public class LibraryBookTest {
         Assert.assertEquals(getResponse.getString("[0].isbn"), isbn, "isbn");
         Assert.assertEquals(getResponse.getString("[0].aisle"), aisle, "aisle");
         Assert.assertEquals(getResponse.getString("[0].author"), author, "author");
-    }
 
-    @AfterMethod(alwaysRun = true)
-    public void deleteAddedBook() {
-        // -- Cleanup: delete the book so the shared server is left as it was --
-        if (addedBookId == null) {
-            return;
-        }
+        // -- Step 6: delete the book that was added --
         given(spec)
                 .body(Map.of("ID", addedBookId))
                 .when().post("/Library/DeleteBook.php")
                 .then().statusCode(200)
                 .body("msg", equalTo("book is successfully deleted"));
+        String deletedBookId = addedBookId;
+        addedBookId = null;
+
+        // -- Step 7: the deleted book can no longer be found by its ID --
+        given(spec)
+                .queryParam("ID", deletedBookId)
+                .when().get("/Library/GetBook.php")
+                .then().statusCode(404)
+                .body("msg", equalTo("The book by requested bookid / author name does not exists!"));
+    }
+
+    /** Safety net: deletes the book only when the test failed before Step 6 deleted it. */
+    @AfterMethod(alwaysRun = true)
+    public void deleteBookLeftByFailedTest() {
+        if (addedBookId == null) {
+            return;
+        }
+        given(spec)
+                .body(Map.of("ID", addedBookId))
+                .when().post("/Library/DeleteBook.php");
         addedBookId = null;
     }
 }
