@@ -16,4 +16,9 @@
       <class name="com.eventhub.restassured.tests.CoursePricesTest"/>
     </classes>
   </test>
+  <test name="POJO">
+    <classes>
+      <class name="com.eventhub.restassured.tests.CoursesPojoTest"/>
+    </classes>
+  </test>
 </suite>
