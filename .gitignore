@@ -35,6 +35,9 @@ test-results/
 # Selenium (Maven) build output, reports and screenshots
 selenium/target/
 
+# Rest Assured (Maven) build output and reports
+restassured/target/
+
 # Claude Code worktrees
 .claude/worktrees/
 

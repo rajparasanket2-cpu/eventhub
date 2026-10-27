@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- Each class starts its own local mock server, so nothing here touches the live site -->
+<suite name="Courses API schema" parallel="none">
+  <test name="Schema">
+    <classes>
+      <class name="com.eventhub.restassured.tests.ValidCoursesResponseTest"/>
+      <class name="com.eventhub.restassured.tests.InvalidCoursesResponseTest"/>
+    </classes>
+  </test>
+</suite>
