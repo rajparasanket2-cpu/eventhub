@@ -48,3 +48,8 @@ reports/
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
+
+# Python (python/ module)
+python/.venv/
+__pycache__/
+.pytest_cache/
