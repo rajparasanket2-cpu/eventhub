@@ -96,4 +96,27 @@ public class CoursesPojoTest extends CoursesApiTestBase {
         // -- Step 3: 50 + 40 + 40 + 50 + 40 + 50 --
         Assert.assertEquals(total, new BigDecimal("270"));
     }
+
+    @Test(description = "TC81: the sum of all course prices, read through the POJO getters, is less than $1000")
+    public void tc81_totalPriceUnder1000FromPojo() {
+        // -- Step 1: get the response as a CoursesResponse --
+        Courses courses = getCourses().getCourses();
+
+        // -- Step 2: add up the price of every course in every category --
+        BigDecimal total = BigDecimal.ZERO;
+        int courseCount = 0;
+        for (List<Course> category : List.of(courses.getWebAutomation(), courses.getApi(), courses.getMobile())) {
+            for (Course course : category) {
+                Assert.assertNotNull(course.getPrice(), course.getCourseTitle() + " has no price");
+                total = total.add(new BigDecimal(course.getPrice()));
+                courseCount++;
+            }
+        }
+        System.out.printf("Sum of %d course prices (POJO): $%s%n", courseCount, total);
+
+        // -- Step 3: there are courses, and their sum is below $1000 --
+        Assert.assertTrue(courseCount > 0, "Response has no courses to sum");
+        Assert.assertTrue(total.compareTo(new BigDecimal("1000")) < 0,
+                "Sum of all course prices should be less than $1000 but was $" + total);
+    }
 }
