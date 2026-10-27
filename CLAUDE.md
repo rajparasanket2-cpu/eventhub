@@ -41,7 +41,7 @@ What CI checks on PRs (`.github/workflows/ci.yml`) — run these locally before 
 Env: `backend/.env` (`DATABASE_URL`, `PORT`, `CORS_ORIGIN`, `JWT_SECRET`, `SHOW_EXPLORE_LINKS`) and `frontend/.env.local` (`NEXT_PUBLIC_API_URL`, including the `/api` suffix). See the `.example` files.
 
 ## Important: tests target the live site
-`playwright.config.ts` sets `baseURL` to `https://eventhub.rahulshettyacademy.com`, and specs also hardcode that `BASE_URL`. Tests do **not** run against the local dev server unless you change both. The `.github/workflows/e2e-tests.yml` workflow runs all Playwright specs and then all Selenium Java tests against production on every push to `main`, and uploads both HTML reports as artifacts.
+`playwright.config.ts` sets `baseURL` to `https://eventhub.rahulshettyacademy.com`, and specs also hardcode that `BASE_URL`. Tests do **not** run against the local dev server unless you change both. The `.github/workflows/e2e-tests.yml` workflow runs all Playwright specs and then all Selenium Java tests against production, and uploads both HTML reports as artifacts. Its push-to-`main` trigger, like `deploy.yml`'s, is currently commented out (paused), so both run only when started manually from the Actions tab.
 
 ## Backend architecture
 Layered: `routes → controllers → services → repositories → Prisma` (`backend/src/`).

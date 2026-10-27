@@ -7,4 +7,9 @@
       <class name="com.eventhub.restassured.tests.InvalidCoursesResponseTest"/>
     </classes>
   </test>
+  <test name="Prices">
+    <classes>
+      <class name="com.eventhub.restassured.tests.CoursePricesTest"/>
+    </classes>
+  </test>
 </suite>

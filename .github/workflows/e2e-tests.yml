@@ -6,7 +6,8 @@
 #   against the live site on each push to main, and uploads both HTML reports
 #   as artifacts so results can be reviewed from the Actions run page.
 #
-# TRIGGER: push to main (plus manual runs from the Actions tab)
+# TRIGGER: manual runs from the Actions tab only. The push-to-main trigger is
+#          paused (commented out below); restore it to run on every push again.
 #
 # ORDER:
 #   playwright and selenium run in parallel. They log in as different users
@@ -23,8 +24,9 @@
 name: E2E Tests – Playwright + Selenium
 
 on:
-  push:
-    branches: [main]
+  # Paused: no runs on push to main for now. Uncomment to re-enable.
+  # push:
+  #   branches: [main]
 
   # Allow manual runs from the GitHub Actions UI
   workflow_dispatch:
