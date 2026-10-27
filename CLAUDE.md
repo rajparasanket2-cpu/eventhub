@@ -64,6 +64,7 @@ Layered: `routes → controllers → services → repositories → Prisma` (`bac
 
 ## Testing conventions
 - Specs go in `tests/<feature-name>.spec.js` (JavaScript).
+- `tests/library-book.spec.js` is the exception: it tests the live Library API at `http://216.10.245.166`, not EventHub, through the `libraryApi` fixture in `tests/fixtures/library-api.js` (which deletes any book a test leaves behind). The same test exists in Rest Assured (`LibraryBookTest`) and Cypress.
 - Locator priority: `data-testid` > role > label/placeholder > id > CSS class. No `page.waitForTimeout()`; use web-first `expect(...)` assertions.
 - Tests must be self-contained (login → action → assert) and clean up their own data (e.g. clear bookings), since all runs share the live account.
 - Test accounts: Playwright uses `rahulshetty1@gmail.com` / `Magiclife1!` (plus `rahulshetty1@yahoo.com` as the second user). Selenium uses its own pair (`selenium/.../config/Config.java`, overridable with `SELENIUM_*` env vars), which `BaseTest` registers when missing. Data is per user, so the two suites can run in parallel. Within a suite, tests still run serially (`workers: 1` / `parallel="none"`), and two runs of the same suite must not overlap.
