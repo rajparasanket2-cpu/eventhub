@@ -1,5 +1,6 @@
 package com.eventhub.restassured.tests;
 
+import com.eventhub.restassured.pojo.AddBookRequest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -38,11 +39,8 @@ public class LibraryBookTest {
     @Test(description = "TC82: a book added through Addbook.php is returned with the same details by GetBook.php?ID, then deleted")
     public void tc82_addGetAndDeleteBook() {
         // -- Step 1: build a book with a unique ISBN, since the server is shared and rejects duplicate IDs --
-        String name = "Learn Appium Automation with Java";
         String isbn = "ra" + UUID.randomUUID().toString().substring(0, 8);
-        String aisle = "227";
-        String author = "John foe";
-        Map<String, String> book = Map.of("name", name, "isbn", isbn, "aisle", aisle, "author", author);
+        AddBookRequest book = new AddBookRequest("Learn Appium Automation with Java", isbn, "227", "John foe");
 
         // -- Step 2: add the book, and keep its ID before asserting so cleanup still runs if an assertion fails --
         Response addResponse = given(spec)
@@ -55,7 +53,7 @@ public class LibraryBookTest {
         // -- Step 3: the book was added, and the server built its ID from isbn + aisle --
         Assert.assertEquals(addResponse.statusCode(), 200, "Addbook.php status");
         Assert.assertEquals(added.getString("Msg"), "successfully added", "Msg");
-        Assert.assertEquals(addedBookId, isbn + aisle, "ID");
+        Assert.assertEquals(addedBookId, book.getIsbn() + book.getAisle(), "ID");
 
         // -- Step 4: get the book back by its ID; GetBook.php answers with an array of books --
         JsonPath getResponse = given(spec)
@@ -66,10 +64,10 @@ public class LibraryBookTest {
 
         // -- Step 5: exactly one book matches the ID, with the same details that were added --
         Assert.assertEquals(getResponse.getInt("size()"), 1, "Exactly one book should match the ID");
-        Assert.assertEquals(getResponse.getString("[0].book_name"), name, "book_name");
-        Assert.assertEquals(getResponse.getString("[0].isbn"), isbn, "isbn");
-        Assert.assertEquals(getResponse.getString("[0].aisle"), aisle, "aisle");
-        Assert.assertEquals(getResponse.getString("[0].author"), author, "author");
+        Assert.assertEquals(getResponse.getString("[0].book_name"), book.getName(), "book_name");
+        Assert.assertEquals(getResponse.getString("[0].isbn"), book.getIsbn(), "isbn");
+        Assert.assertEquals(getResponse.getString("[0].aisle"), book.getAisle(), "aisle");
+        Assert.assertEquals(getResponse.getString("[0].author"), book.getAuthor(), "author");
 
         // -- Step 6: delete the book that was added --
         given(spec)
