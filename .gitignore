@@ -43,3 +43,8 @@ restassured/target/
 
 # Reports from the Docker test runs (run-tests.sh / run-tests.cmd)
 reports/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
