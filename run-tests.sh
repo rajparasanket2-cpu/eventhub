@@ -40,7 +40,10 @@ for service in $services; do
   rc=$(exit_code "$service")
   [ "$rc" -eq 0 ] && status="PASSED" || { status="FAILED (exit $rc)"; failed=1; }
   printf '%-11s %s\n' "$service:" "$status"
-  echo "  report: reports/$service-report/index.html"
+  # Playwright's index.html lists every test; for Selenium, TestNG's index.html hides them, so point at our table
+  report=index.html
+  [ "$service" = selenium ] && report=test-case-report.html
+  echo "  report: reports/$service-report/$report"
 done
 
 docker compose down --remove-orphans >/dev/null 2>&1

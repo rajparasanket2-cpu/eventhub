@@ -17,7 +17,8 @@
 #
 # REPORTS (artifacts, kept 30 days):
 #   playwright-report-<run>  – Playwright HTML report (open index.html)
-#   selenium-report-<run>    – TestNG HTML report (open index.html or emailable-report.html)
+#   selenium-report-<run>    – open test-case-report.html (every test case with status and failure reason);
+#                              TestNG's own index.html / emailable-report.html are included too
 #   Screenshots/videos of failures are included when there are any.
 # ══════════════════════════════════════════════════════════════════════════════
 

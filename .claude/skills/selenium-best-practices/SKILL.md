@@ -661,7 +661,7 @@ mvn -f selenium/pom.xml test -Dtest=BookingFlowTest
 mvn -f selenium/pom.xml test -Dtest=BookingFlowTest#tc003_cancelFromDetailPage
 mvn -f selenium/pom.xml test -Dtest=BookingFlowTest -Dheaded=true      # watch it in a real window
 ```
-Reports: `selenium/target/surefire-reports/` (TestNG HTML in `index.html`).
+Reports: `selenium/target/surefire-reports/`. Open `test-case-report.html` for one row per test case (status, time, failure reason), written by `com.eventhub.utils.TestCaseReport` (registered in `testng.xml`). TestNG's own `index.html` hides the test list in a collapsed sidebar.
 
 ---
 

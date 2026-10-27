@@ -4,7 +4,7 @@
 #
 # Build context: repository root (see docker-compose.yml)
 # Run:           docker compose run --rm --build selenium
-# Reports:       reports/selenium-report/ (TestNG HTML: index.html, emailable-report.html)
+# Reports:       reports/selenium-report/test-case-report.html (plus TestNG's index.html, emailable-report.html)
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Maven 3.9 + Java 21 (Eclipse Temurin), Ubuntu based

@@ -42,7 +42,8 @@ for %%s in (%SERVICES%) do (
     for /f %%c in ('docker inspect -f "{{.State.ExitCode}}" %%i') do set "RC=%%c"
   )
   if "!RC!"=="0" (echo %%s: PASSED) else (echo %%s: FAILED ^(exit !RC!^) & set "FAILED=1")
-  echo   report: reports\%%s-report\index.html
+  rem Playwright's index.html lists every test; for Selenium, TestNG's index.html hides them, so point at our table
+  if "%%s"=="selenium" (echo   report: reports\%%s-report\test-case-report.html) else (echo   report: reports\%%s-report\index.html)
 )
 
 docker compose down --remove-orphans >nul 2>&1

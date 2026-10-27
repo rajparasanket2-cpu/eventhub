@@ -49,7 +49,7 @@ If the module exists, **reuse** its helpers and page objects. Extend them; don't
 - Compile first: `mvn -f selenium/pom.xml -q test-compile`. Fix compile errors before running anything
 - Run: `mvn -f selenium/pom.xml test -Dtest=<Feature>Test`
 - Single test: `mvn -f selenium/pom.xml test -Dtest=<Feature>Test#<methodName>`
-- Capture the full output, including the surefire report (`selenium/target/surefire-reports/`)
+- Capture the full output, including the surefire report (`selenium/target/surefire-reports/`; `test-case-report.html` lists every test case with status and failure reason)
 
 ### Step 4: If Tests Fail — Debug & Fix (Three-Way Check)
 - **Read the error** carefully. Common Selenium causes:

@@ -68,7 +68,7 @@ To run one method:
 mvn -f selenium/pom.xml test -Dtest=<Feature>Test#<methodName>
 ```
 
-Review the complete command output and relevant reports under `selenium/target/surefire-reports/`.
+Review the complete command output and relevant reports under `selenium/target/surefire-reports/` (start with `test-case-report.html`, which lists every test case with its status and failure reason).
 
 ### 4. Diagnose Failures
 
