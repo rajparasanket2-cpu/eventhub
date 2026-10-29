@@ -70,6 +70,16 @@
         "MYSQL_PASSWORD": "<your-mysql-password>",
         "MYSQL_DATABASE": "rahulshettyacademy"
       }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-github-pat>"
+      }
     }
   }
 }
